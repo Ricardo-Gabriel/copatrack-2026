@@ -2,6 +2,7 @@ import { useCollection } from './hooks/useCollection';
 import { TEAMS_DATA } from './data/stickers';
 import { StickerCard } from './components/StickerCard';
 import { TradeModal } from './components/TradeModal';
+import { FLAG_IMAGES } from './data/flags';
 import { Trophy, Search, Share2, LayoutGrid, Copy, Ban, History as HistoryIcon, X, ArrowRightLeft } from 'lucide-react';
 import { useState, useMemo } from 'react';
 import { clsx, type ClassValue } from 'clsx';
@@ -205,11 +206,10 @@ function App() {
                     style={{ borderColor: team.primaryColor || '#1E40AF' }}
                   >
                     {team.flag.startsWith('/src/assets/Flags/') || team.flag.endsWith('.jpg') ? (
-                      <img src={team.flag} alt={team.name} className="w-8 h-6 object-cover rounded shadow-sm" />
+                      <img src={FLAG_IMAGES[team.flag] || team.flag} alt={team.name} className="w-8 h-6 object-cover rounded shadow-sm" />
                     ) : (
                       <span className="text-2xl">{team.flag}</span>
-                    )}
-                    <h2 className="text-xl font-bold uppercase tracking-tight">{team.name}</h2>
+                    )}                    <h2 className="text-xl font-bold uppercase tracking-tight">{team.name}</h2>
                     <span className="bg-slate-800 text-slate-400 text-[10px] px-2 py-0.5 rounded-full font-bold">
                       {team.stickers.length} {viewMode === 'all' ? 'FIGURINHAS' : viewMode === 'missing' ? 'FALTANDO' : 'REPETIDAS'}
                     </span>
