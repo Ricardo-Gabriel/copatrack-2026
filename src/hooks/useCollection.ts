@@ -1,16 +1,20 @@
 import { useState, useEffect } from 'react';
-import type { Transaction, AppState } from '../types';
+import type { Transaction, AppState, TeamMetadata } from '../types';
 
 export function useCollection() {
   const [state, setState] = useState<AppState>(() => {
     const saved = localStorage.getItem('copatrack-2026-data');
-    if (saved) return JSON.parse(saved);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      // Initialize teamsMetadata if it doesn't exist
+      if (!parsed.teamsMetadata) parsed.teamsMetadata = {};
+      return parsed;
+    }
     
-    // Migration from old format
-    const oldCollection = localStorage.getItem('copatrack-2026-collection');
     return {
-      collection: oldCollection ? JSON.parse(oldCollection) : {},
-      history: []
+      collection: {},
+      history: [],
+      teamsMetadata: {}
     };
   });
 
@@ -40,10 +44,21 @@ export function useCollection() {
       };
 
       return {
+        ...prev,
         collection: newCollection,
         history: [transaction, ...prev.history].slice(0, 100)
       };
     });
+  };
+
+  const updateTeamMetadata = (teamId: string, metadata: TeamMetadata) => {
+    setState(prev => ({
+      ...prev,
+      teamsMetadata: {
+        ...prev.teamsMetadata,
+        [teamId]: metadata
+      }
+    }));
   };
 
   const executeTrade = (trade: { stickersOut: string[]; stickersIn: string[]; partnerName: string }) => {
@@ -52,7 +67,6 @@ export function useCollection() {
       const newHistory = [...prev.history];
       const timestamp = Date.now();
 
-      // Processar figurinhas que SAÍRAM (out)
       trade.stickersOut.forEach(id => {
         const current = newCollection[id] || 0;
         if (current > 0) {
@@ -71,7 +85,6 @@ export function useCollection() {
         }
       });
 
-      // Processar figurinhas que ENTRARAM (in)
       trade.stickersIn.forEach(id => {
         newCollection[id] = (newCollection[id] || 0) + 1;
         newHistory.unshift({
@@ -85,6 +98,7 @@ export function useCollection() {
       });
 
       return {
+        ...prev,
         collection: newCollection,
         history: newHistory.slice(0, 100)
       };
@@ -94,7 +108,9 @@ export function useCollection() {
   return { 
     collection: state.collection, 
     history: state.history, 
+    teamsMetadata: state.teamsMetadata,
     updateSticker,
-    executeTrade 
+    executeTrade,
+    updateTeamMetadata
   };
 }

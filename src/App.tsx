@@ -2,11 +2,13 @@ import { useCollection } from './hooks/useCollection';
 import { TEAMS_DATA } from './data/stickers';
 import { StickerCard } from './components/StickerCard';
 import { TradeModal } from './components/TradeModal';
+import { TeamEditorModal } from './components/TeamEditorModal';
 import { FLAG_IMAGES } from './data/flags';
-import { Trophy, Search, Share2, LayoutGrid, Copy, Ban, History as HistoryIcon, X, ArrowRightLeft } from 'lucide-react';
+import { Trophy, Search, Share2, LayoutGrid, Copy, Ban, History as HistoryIcon, X, ArrowRightLeft, Palette } from 'lucide-react';
 import { useState, useMemo } from 'react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import type { Team } from './types';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -15,10 +17,11 @@ function cn(...inputs: ClassValue[]) {
 type ViewMode = 'all' | 'missing' | 'duplicates' | 'history';
 
 function App() {
-  const { collection, history, updateSticker, executeTrade } = useCollection();
+  const { collection, history, teamsMetadata, updateSticker, executeTrade, updateTeamMetadata } = useCollection();
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<ViewMode>('all');
   const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
+  const [editingTeam, setEditingTeam] = useState<Team | null>(null);
 
   const stats = useMemo(() => {
     const totalStickers = TEAMS_DATA.reduce((acc, team) => acc + team.stickers.length, 0);
@@ -49,6 +52,14 @@ function App() {
 
   const filteredTeams = useMemo(() => {
     return TEAMS_DATA.map(team => {
+      // Aplicar metadados customizados se existirem
+      const meta = teamsMetadata[team.id] || { 
+        name: team.name, 
+        flag: team.flag, 
+        primaryColor: team.primaryColor, 
+        secondaryColor: team.secondaryColor 
+      };
+
       const filteredStickers = team.stickers.filter(s => {
         const matchesSearch = s.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                             s.id.toLowerCase().includes(searchTerm.toLowerCase());
@@ -59,9 +70,16 @@ function App() {
         return matchesSearch;
       });
 
-      return { ...team, stickers: filteredStickers };
+      return { 
+        ...team, 
+        name: meta.name,
+        flag: meta.flag,
+        primaryColor: meta.primaryColor,
+        secondaryColor: meta.secondaryColor,
+        stickers: filteredStickers 
+      };
     }).filter(team => team.stickers.length > 0);
-  }, [searchTerm, viewMode, collection]);
+  }, [searchTerm, viewMode, collection, teamsMetadata]);
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 w-full pb-24">
@@ -201,18 +219,28 @@ function App() {
             ) : (
               filteredTeams.map(team => (
                 <section key={team.id} className="space-y-4">
-                  <div 
-                    className="flex items-center gap-3 border-l-4 pl-4"
-                    style={{ borderColor: team.primaryColor || '#1E40AF' }}
-                  >
-                    {team.flag.startsWith('/src/assets/Flags/') || team.flag.endsWith('.jpg') ? (
-                      <img src={FLAG_IMAGES[team.flag] || team.flag} alt={team.name} className="w-8 h-6 object-cover rounded shadow-sm" />
-                    ) : (
-                      <span className="text-2xl">{team.flag}</span>
-                    )}                    <h2 className="text-xl font-bold uppercase tracking-tight">{team.name}</h2>
-                    <span className="bg-slate-800 text-slate-400 text-[10px] px-2 py-0.5 rounded-full font-bold">
-                      {team.stickers.length} {viewMode === 'all' ? 'FIGURINHAS' : viewMode === 'missing' ? 'FALTANDO' : 'REPETIDAS'}
-                    </span>
+                  <div className="flex items-center justify-between pr-2">
+                    <div 
+                      className="flex items-center gap-3 border-l-4 pl-4"
+                      style={{ borderColor: team.primaryColor || '#1E40AF' }}
+                    >
+                      {team.flag.startsWith('/src/assets/Flags/') || team.flag.endsWith('.jpg') ? (
+                        <img src={FLAG_IMAGES[team.flag] || team.flag} alt={team.name} className="w-8 h-6 object-cover rounded shadow-sm" />
+                      ) : (
+                        <span className="text-2xl">{team.flag}</span>
+                      )}
+                      <h2 className="text-xl font-bold uppercase tracking-tight">{team.name}</h2>
+                      <span className="bg-slate-800 text-slate-400 text-[10px] px-2 py-0.5 rounded-full font-bold">
+                        {team.stickers.length} {viewMode === 'all' ? 'FIGURINHAS' : viewMode === 'missing' ? 'FALTANDO' : 'REPETIDAS'}
+                      </span>
+                    </div>
+                    <button 
+                      onClick={() => setEditingTeam(team)}
+                      className="p-2 text-slate-600 hover:text-cup-yellow transition-colors"
+                      title="Editar Seleção"
+                    >
+                      <Palette size={18} />
+                    </button>
                   </div>
 
                   <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-3">
@@ -236,13 +264,28 @@ function App() {
         )}
       </main>
 
-      {/* Trade Modal */}
+      {/* Modals */}
       <TradeModal 
         isOpen={isTradeModalOpen}
         onClose={() => setIsTradeModalOpen(false)}
         onTrade={executeTrade}
         collection={collection}
       />
+
+      {editingTeam && (
+        <TeamEditorModal 
+          isOpen={true}
+          onClose={() => setEditingTeam(null)}
+          team={editingTeam}
+          metadata={teamsMetadata[editingTeam.id] || {
+            name: editingTeam.name,
+            flag: editingTeam.flag,
+            primaryColor: editingTeam.primaryColor,
+            secondaryColor: editingTeam.secondaryColor
+          }}
+          onSave={updateTeamMetadata}
+        />
+      )}
 
       {/* Bottom Navigation */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 bg-slate-900/90 backdrop-blur-lg border-t border-slate-800 pb-safe">

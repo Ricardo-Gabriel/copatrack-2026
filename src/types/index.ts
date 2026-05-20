@@ -43,7 +43,15 @@ export interface CollectionState {
   [stickerId: string]: number;
 }
 
+export interface TeamMetadata {
+  name: string;
+  flag: string;
+  primaryColor?: string;
+  secondaryColor?: string;
+}
+
 export interface AppState {
   collection: CollectionState;
   history: Transaction[];
+  teamsMetadata: Record<string, TeamMetadata>;
 }
