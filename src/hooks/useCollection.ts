@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { doc, getDoc, setDoc, onSnapshot } from "firebase/firestore";
-import { onAuthStateChanged, User } from "firebase/auth";
+import { doc, setDoc, onSnapshot } from "firebase/firestore";
+import { onAuthStateChanged, type User } from "firebase/auth";
 import { auth, db } from "../lib/firebase";
 import type { Transaction, AppState, TeamMetadata } from '../types';
 
@@ -31,12 +31,10 @@ export function useCollection() {
 
     const docRef = doc(db, "users", user.uid);
     
-    // Escutar mudanças em tempo real no banco
     const unsubscribe = onSnapshot(docRef, (docSnap) => {
       if (docSnap.exists()) {
         setState(docSnap.data() as AppState);
       } else {
-        // Se for um novo usuário, inicializar o banco com os dados locais atuais
         const localData = localStorage.getItem('copatrack-2026-data');
         const initialData = localData ? JSON.parse(localData) : state;
         setDoc(docRef, initialData);
@@ -46,11 +44,10 @@ export function useCollection() {
     return unsubscribe;
   }, [user]);
 
-  // 3. Persistir localmente para redundância
+  // 3. Persistir localmente e na nuvem
   useEffect(() => {
     localStorage.setItem('copatrack-2026-data', JSON.stringify(state));
     
-    // Se logado, salvar também no Firestore (debounced seria melhor, mas vamos simplificar)
     if (user) {
       const docRef = doc(db, "users", user.uid);
       setDoc(docRef, state, { merge: true });

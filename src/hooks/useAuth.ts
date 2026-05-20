@@ -1,11 +1,5 @@
 import { useState, useEffect } from 'react';
-import { 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword, 
-  signOut, 
-  onAuthStateChanged,
-  User
-} from "firebase/auth";
+import { onAuthStateChanged, type User } from "firebase/auth";
 import { auth } from "../lib/firebase";
 
 export function useAuth() {
@@ -15,7 +9,6 @@ export function useAuth() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
-      setLoading(loading); // Fix: this should be setLoading(false)
       setLoading(false);
     });
     return unsubscribe;
