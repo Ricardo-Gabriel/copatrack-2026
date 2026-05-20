@@ -1,12 +1,21 @@
 import { useCollection } from './hooks/useCollection';
 import { TEAMS_DATA } from './data/stickers';
 import { StickerCard } from './components/StickerCard';
-import { Trophy, Search, Share2 } from 'lucide-react';
+import { Trophy, Search, Share2, LayoutGrid, Copy, Ban, History as HistoryIcon, X } from 'lucide-react';
 import { useState, useMemo } from 'react';
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+type ViewMode = 'all' | 'missing' | 'duplicates' | 'history';
 
 function App() {
-  const { collection, updateSticker } = useCollection();
+  const { collection, history, updateSticker } = useCollection();
   const [searchTerm, setSearchTerm] = useState('');
+  const [viewMode, setViewMode] = useState<ViewMode>('all');
 
   const stats = useMemo(() => {
     const totalStickers = TEAMS_DATA.reduce((acc, team) => acc + team.stickers.length, 0);
@@ -36,18 +45,23 @@ function App() {
   };
 
   const filteredTeams = useMemo(() => {
-    if (!searchTerm) return TEAMS_DATA;
-    return TEAMS_DATA.map(team => ({
-      ...team,
-      stickers: team.stickers.filter(s => 
-        s.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-        s.id.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    })).filter(team => team.stickers.length > 0);
-  }, [searchTerm]);
+    return TEAMS_DATA.map(team => {
+      const filteredStickers = team.stickers.filter(s => {
+        const matchesSearch = s.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                            s.id.toLowerCase().includes(searchTerm.toLowerCase());
+        const qty = collection[s.id] || 0;
+        
+        if (viewMode === 'missing') return matchesSearch && qty === 0;
+        if (viewMode === 'duplicates') return matchesSearch && qty > 1;
+        return matchesSearch;
+      });
+
+      return { ...team, stickers: filteredStickers };
+    }).filter(team => team.stickers.length > 0);
+  }, [searchTerm, viewMode, collection]);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 w-full pb-10">
+    <div className="min-h-screen bg-slate-950 text-slate-100 w-full pb-24">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-slate-800 p-4">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -69,6 +83,14 @@ function App() {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
+            {searchTerm && (
+              <button 
+                onClick={() => setSearchTerm('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500"
+              >
+                <X size={16} />
+              </button>
+            )}
           </div>
         </div>
       </header>
@@ -98,54 +120,156 @@ function App() {
             <div className="text-2xl font-black text-white">{stats.ownedUnique} <span className="text-xs text-slate-500">/ {stats.totalStickers}</span></div>
           </div>
 
-          <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-xl">
+          <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-xl cursor-pointer hover:border-red-500/50 transition-colors" onClick={() => setViewMode('missing')}>
             <div className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">Faltam</div>
             <div className="text-2xl font-black text-red-500">{stats.totalStickers - stats.ownedUnique}</div>
           </div>
 
-          <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-xl">
+          <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-xl cursor-pointer hover:border-cup-yellow/50 transition-colors" onClick={() => setViewMode('duplicates')}>
             <div className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">Repetidas</div>
             <div className="text-2xl font-black text-cup-yellow">{stats.totalRepeated}</div>
           </div>
         </div>
 
-        {/* Stickers Grid */}
-        <div className="space-y-10">
-          {filteredTeams.map(team => (
-            <section key={team.id} className="space-y-4">
-              <div 
-                className="flex items-center gap-3 border-l-4 pl-4"
-                style={{ borderColor: team.primaryColor || '#1E40AF' }}
-              >
-                {team.flag.startsWith('/src/assets/Flags/') || team.flag.endsWith('.jpg') ? (
-                  <img src={team.flag} alt={team.name} className="w-8 h-6 object-cover rounded shadow-sm" />
-                ) : (
-                  <span className="text-2xl">{team.flag}</span>
-                )}
-                <h2 className="text-xl font-bold uppercase tracking-tight">{team.name}</h2>
-                <span className="bg-slate-800 text-slate-400 text-[10px] px-2 py-0.5 rounded-full font-bold">
-                  {team.stickers.length} FIGURINHAS
-                </span>
+        {viewMode === 'history' ? (
+          <section className="space-y-4">
+            <h2 className="text-xl font-bold uppercase tracking-tight flex items-center gap-2">
+              <HistoryIcon size={20} /> Histórico de Atividades
+            </h2>
+            <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden">
+              {history.length === 0 ? (
+                <div className="p-8 text-center text-slate-500">Nenhuma atividade registrada ainda.</div>
+              ) : (
+                <div className="divide-y divide-slate-800">
+                  {history.map(item => (
+                    <div key={item.id} className="p-4 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className={cn(
+                          "w-10 h-10 rounded-lg flex items-center justify-center font-bold text-xs",
+                          item.type === 'add' ? "bg-cup-green/20 text-cup-green" : 
+                          item.type === 'remove' ? "bg-red-500/20 text-red-500" : 
+                          "bg-cup-blue/20 text-cup-blue"
+                        )}>
+                          {item.stickerId}
+                        </div>
+                        <div>
+                          <div className="text-sm font-bold">
+                            {item.type === 'add' ? 'Adicionada' : item.type === 'remove' ? 'Removida' : 'Trocada'}
+                          </div>
+                          <div className="text-xs text-slate-500">
+                            {new Date(item.timestamp).toLocaleString('pt-BR')}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm font-mono">Qtd: {item.quantity}</div>
+                        {item.details && <div className="text-[10px] text-slate-500">{item.details}</div>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </section>
+        ) : (
+          <div className="space-y-10">
+            {filteredTeams.length === 0 ? (
+              <div className="text-center py-20">
+                <p className="text-slate-500">Nenhuma figurinha encontrada para este filtro.</p>
+                <button 
+                  onClick={() => { setViewMode('all'); setSearchTerm(''); }}
+                  className="mt-4 text-cup-green font-bold text-sm hover:underline"
+                >
+                  Limpar todos os filtros
+                </button>
               </div>
+            ) : (
+              filteredTeams.map(team => (
+                <section key={team.id} className="space-y-4">
+                  <div 
+                    className="flex items-center gap-3 border-l-4 pl-4"
+                    style={{ borderColor: team.primaryColor || '#1E40AF' }}
+                  >
+                    {team.flag.startsWith('/src/assets/Flags/') || team.flag.endsWith('.jpg') ? (
+                      <img src={team.flag} alt={team.name} className="w-8 h-6 object-cover rounded shadow-sm" />
+                    ) : (
+                      <span className="text-2xl">{team.flag}</span>
+                    )}
+                    <h2 className="text-xl font-bold uppercase tracking-tight">{team.name}</h2>
+                    <span className="bg-slate-800 text-slate-400 text-[10px] px-2 py-0.5 rounded-full font-bold">
+                      {team.stickers.length} {viewMode === 'all' ? 'FIGURINHAS' : viewMode === 'missing' ? 'FALTANDO' : 'REPETIDAS'}
+                    </span>
+                  </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-3">
-                {team.stickers.map(sticker => (
-                  <StickerCard 
-                    key={sticker.id}
-                    sticker={sticker}
-                    quantity={collection[sticker.id] || 0}
-                    onUpdate={updateSticker}
-                    colors={team.primaryColor && team.secondaryColor ? {
-                      primary: team.primaryColor,
-                      secondary: team.secondaryColor
-                    } : undefined}
-                  />
-                ))}
-              </div>
-            </section>
-          ))}
-        </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-3">
+                    {team.stickers.map(sticker => (
+                      <StickerCard 
+                        key={sticker.id}
+                        sticker={sticker}
+                        quantity={collection[sticker.id] || 0}
+                        onUpdate={updateSticker}
+                        colors={team.primaryColor && team.secondaryColor ? {
+                          primary: team.primaryColor,
+                          secondary: team.secondaryColor
+                        } : undefined}
+                      />
+                    ))}
+                  </div>
+                </section>
+              ))
+            )}
+          </div>
+        )}
       </main>
+
+      {/* Bottom Navigation */}
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-slate-900/90 backdrop-blur-lg border-t border-slate-800 pb-safe">
+        <div className="max-w-md mx-auto flex justify-around p-2">
+          <button 
+            onClick={() => setViewMode('all')}
+            className={cn(
+              "flex flex-col items-center gap-1 p-2 transition-colors",
+              viewMode === 'all' ? "text-cup-green" : "text-slate-500"
+            )}
+          >
+            <LayoutGrid size={20} />
+            <span className="text-[10px] font-bold">Álbum</span>
+          </button>
+          
+          <button 
+            onClick={() => setViewMode('missing')}
+            className={cn(
+              "flex flex-col items-center gap-1 p-2 transition-colors",
+              viewMode === 'missing' ? "text-red-500" : "text-slate-500"
+            )}
+          >
+            <Ban size={20} />
+            <span className="text-[10px] font-bold">Faltam</span>
+          </button>
+
+          <button 
+            onClick={() => setViewMode('duplicates')}
+            className={cn(
+              "flex flex-col items-center gap-1 p-2 transition-colors",
+              viewMode === 'duplicates' ? "text-cup-yellow" : "text-slate-500"
+            )}
+          >
+            <Copy size={20} />
+            <span className="text-[10px] font-bold">Repetidas</span>
+          </button>
+
+          <button 
+            onClick={() => setViewMode('history')}
+            className={cn(
+              "flex flex-col items-center gap-1 p-2 transition-colors",
+              viewMode === 'history' ? "text-cup-blue" : "text-slate-500"
+            )}
+          >
+            <HistoryIcon size={20} />
+            <span className="text-[10px] font-bold">Histórico</span>
+          </button>
+        </div>
+      </nav>
     </div>
   );
 }

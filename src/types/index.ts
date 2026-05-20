@@ -22,6 +22,20 @@ export interface Team {
   stickers: Sticker[];
 }
 
+export interface Transaction {
+  id: string;
+  timestamp: number;
+  stickerId: string;
+  type: 'add' | 'remove' | 'trade';
+  quantity: number;
+  details?: string;
+}
+
 export interface CollectionState {
   [stickerId: string]: number;
+}
+
+export interface AppState {
+  collection: CollectionState;
+  history: Transaction[];
 }
