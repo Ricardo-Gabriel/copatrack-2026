@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ArrowRightLeft, X, Search } from 'lucide-react';
 import { TEAMS_DATA } from '../data/stickers';
-import type { Sticker, CollectionState } from '../types';
+import type { CollectionState } from '../types';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
