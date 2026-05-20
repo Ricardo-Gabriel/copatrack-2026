@@ -1,5 +1,5 @@
 import type { Sticker } from '../types';
-import { Plus, Minus, Check } from 'lucide-react';
+import { Plus, Minus } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
