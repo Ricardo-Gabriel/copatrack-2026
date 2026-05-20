@@ -22,11 +22,19 @@ export interface Team {
   stickers: Sticker[];
 }
 
+export interface Trade {
+  id: string;
+  timestamp: number;
+  stickerOutId: string; // Figurinha que eu dou
+  stickerInId: string;  // Figurinha que eu recebo
+  partnerName?: string;
+}
+
 export interface Transaction {
   id: string;
   timestamp: number;
   stickerId: string;
-  type: 'add' | 'remove' | 'trade';
+  type: 'add' | 'remove' | 'trade-in' | 'trade-out';
   quantity: number;
   details?: string;
 }

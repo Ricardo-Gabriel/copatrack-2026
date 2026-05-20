@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { Transaction, AppState } from '../types';
+import type { Transaction, AppState, Trade } from '../types';
 
 export function useCollection() {
   const [state, setState] = useState<AppState>(() => {
@@ -41,44 +41,47 @@ export function useCollection() {
 
       return {
         collection: newCollection,
-        history: [transaction, ...prev.history].slice(0, 100) // Keep last 100 transactions
+        history: [transaction, ...prev.history].slice(0, 100)
       };
     });
   };
 
-  const addTrade = (stickerInId: string | null, stickerOutId: string | null, details: string) => {
+  const executeTrade = (trade: Omit<Trade, 'id' | 'timestamp'>) => {
     setState(prev => {
       const newCollection = { ...prev.collection };
       const newHistory = [...prev.history];
+      const timestamp = Date.now();
 
-      if (stickerInId) {
-        newCollection[stickerInId] = (newCollection[stickerInId] || 0) + 1;
-        newHistory.unshift({
-          id: crypto.randomUUID(),
-          timestamp: Date.now(),
-          stickerId: stickerInId,
-          type: 'trade',
-          quantity: 1,
-          details: `Entrada via troca: ${details}`
-        });
-      }
-
-      if (stickerOutId) {
-        const current = newCollection[stickerOutId] || 0;
+      // Processar figurinha que SAU (out)
+      if (trade.stickerOutId) {
+        const current = newCollection[trade.stickerOutId] || 0;
         if (current > 0) {
           const next = current - 1;
-          if (next === 0) delete newCollection[stickerOutId];
-          else newCollection[stickerOutId] = next;
-          
+          if (next === 0) delete newCollection[trade.stickerOutId];
+          else newCollection[trade.stickerOutId] = next;
+
           newHistory.unshift({
             id: crypto.randomUUID(),
-            timestamp: Date.now(),
-            stickerId: stickerOutId,
-            type: 'trade',
+            timestamp,
+            stickerId: trade.stickerOutId,
+            type: 'trade-out',
             quantity: 1,
-            details: `Saída via troca: ${details}`
+            details: `Trocada com ${trade.partnerName || 'alguém'}`
           });
         }
+      }
+
+      // Processar figurinha que ENTROU (in)
+      if (trade.stickerInId) {
+        newCollection[trade.stickerInId] = (newCollection[trade.stickerInId] || 0) + 1;
+        newHistory.unshift({
+          id: crypto.randomUUID(),
+          timestamp,
+          stickerId: trade.stickerInId,
+          type: 'trade-in',
+          quantity: 1,
+          details: `Recebida de ${trade.partnerName || 'alguém'}`
+        });
       }
 
       return {
@@ -92,6 +95,6 @@ export function useCollection() {
     collection: state.collection, 
     history: state.history, 
     updateSticker,
-    addTrade 
+    executeTrade 
   };
 }

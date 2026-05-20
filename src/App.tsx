@@ -1,7 +1,8 @@
 import { useCollection } from './hooks/useCollection';
 import { TEAMS_DATA } from './data/stickers';
 import { StickerCard } from './components/StickerCard';
-import { Trophy, Search, Share2, LayoutGrid, Copy, Ban, History as HistoryIcon, X } from 'lucide-react';
+import { TradeModal } from './components/TradeModal';
+import { Trophy, Search, Share2, LayoutGrid, Copy, Ban, History as HistoryIcon, X, ArrowRightLeft } from 'lucide-react';
 import { useState, useMemo } from 'react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -13,9 +14,10 @@ function cn(...inputs: ClassValue[]) {
 type ViewMode = 'all' | 'missing' | 'duplicates' | 'history';
 
 function App() {
-  const { collection, history, updateSticker } = useCollection();
+  const { collection, history, updateSticker, executeTrade } = useCollection();
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<ViewMode>('all');
+  const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
 
   const stats = useMemo(() => {
     const totalStickers = TEAMS_DATA.reduce((acc, team) => acc + team.stickers.length, 0);
@@ -131,6 +133,16 @@ function App() {
           </div>
         </div>
 
+        {/* Quick Actions */}
+        <div className="flex justify-center">
+          <button 
+            onClick={() => setIsTradeModalOpen(true)}
+            className="bg-cup-blue hover:bg-blue-600 text-white px-8 py-3 rounded-full font-black text-sm flex items-center gap-2 shadow-lg shadow-cup-blue/20 transition-all active:scale-95"
+          >
+            <ArrowRightLeft size={18} /> REGISTRAR TROCA
+          </button>
+        </div>
+
         {viewMode === 'history' ? (
           <section className="space-y-4">
             <h2 className="text-xl font-bold uppercase tracking-tight flex items-center gap-2">
@@ -146,15 +158,17 @@ function App() {
                       <div className="flex items-center gap-3">
                         <div className={cn(
                           "w-10 h-10 rounded-lg flex items-center justify-center font-bold text-xs",
-                          item.type === 'add' ? "bg-cup-green/20 text-cup-green" : 
-                          item.type === 'remove' ? "bg-red-500/20 text-red-500" : 
+                          item.type === 'add' || item.type === 'trade-in' ? "bg-cup-green/20 text-cup-green" : 
+                          item.type === 'remove' || item.type === 'trade-out' ? "bg-red-500/20 text-red-500" : 
                           "bg-cup-blue/20 text-cup-blue"
                         )}>
                           {item.stickerId}
                         </div>
                         <div>
                           <div className="text-sm font-bold">
-                            {item.type === 'add' ? 'Adicionada' : item.type === 'remove' ? 'Removida' : 'Trocada'}
+                            {item.type === 'add' ? 'Adicionada' : 
+                             item.type === 'remove' ? 'Removida' : 
+                             item.type === 'trade-in' ? 'Recebida (Troca)' : 'Enviada (Troca)'}
                           </div>
                           <div className="text-xs text-slate-500">
                             {new Date(item.timestamp).toLocaleString('pt-BR')}
@@ -163,7 +177,7 @@ function App() {
                       </div>
                       <div className="text-right">
                         <div className="text-sm font-mono">Qtd: {item.quantity}</div>
-                        {item.details && <div className="text-[10px] text-slate-500">{item.details}</div>}
+                        {item.details && <div className="text-[10px] text-slate-500 max-w-[150px] truncate">{item.details}</div>}
                       </div>
                     </div>
                   ))}
@@ -221,6 +235,14 @@ function App() {
           </div>
         )}
       </main>
+
+      {/* Trade Modal */}
+      <TradeModal 
+        isOpen={isTradeModalOpen}
+        onClose={() => setIsTradeModalOpen(false)}
+        onTrade={executeTrade}
+        collection={collection}
+      />
 
       {/* Bottom Navigation */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 bg-slate-900/90 backdrop-blur-lg border-t border-slate-800 pb-safe">
