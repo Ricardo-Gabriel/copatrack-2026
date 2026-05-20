@@ -1,10 +1,9 @@
 const CACHE_NAME = 'copatrack-v1';
 const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/favicon.svg',
-  // Add other static assets here after build
+  './',
+  './index.html',
+  './manifest.json',
+  './favicon.svg'
 ];
 
 self.addEventListener('install', (event) => {
