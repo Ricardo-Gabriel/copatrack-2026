@@ -72,14 +72,14 @@ export function StickerCard({ sticker, quantity, onUpdate, colors }: StickerCard
       <div className="flex items-center gap-2 mt-3 z-20">
         <button 
           onClick={(e) => { e.stopPropagation(); onUpdate(sticker.id, -1); }}
-          className="p-1 rounded-md bg-slate-700 hover:bg-red-500 transition-colors"
+          className="p-2 rounded-md bg-slate-700 hover:bg-red-500 active:scale-90 transition-all"
           disabled={!isOwned}
         >
-          <Minus size={12} />
+          <Minus size={14} />
         </button>
         
         <span className={cn(
-          "text-xs font-bold w-4 text-center",
+          "text-xs font-bold w-4 text-center select-none",
           isRepeated ? "text-cup-yellow" : "text-white"
         )}>
           {quantity}
@@ -87,9 +87,9 @@ export function StickerCard({ sticker, quantity, onUpdate, colors }: StickerCard
 
         <button 
           onClick={(e) => { e.stopPropagation(); onUpdate(sticker.id, 1); }}
-          className="p-1 rounded-md bg-slate-700 hover:bg-cup-green transition-colors"
+          className="p-2 rounded-md bg-slate-700 hover:bg-cup-green active:scale-90 transition-all"
         >
-          <Plus size={12} />
+          <Plus size={14} />
         </button>
       </div>
 

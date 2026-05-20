@@ -1,7 +1,7 @@
 import { useCollection } from './hooks/useCollection';
 import { TEAMS_DATA } from './data/stickers';
 import { StickerCard } from './components/StickerCard';
-import { Trophy, Search, Filter } from 'lucide-react';
+import { Trophy, Search, Share2 } from 'lucide-react';
 import { useState, useMemo } from 'react';
 
 function App() {
@@ -16,6 +16,24 @@ function App() {
 
     return { totalStickers, ownedUnique, totalRepeated, percentage };
   }, [collection]);
+
+  const handleShare = async () => {
+    const text = `Meu progresso no CopaTrack 2026: ${stats.percentage}% completo (${stats.ownedUnique}/${stats.totalStickers})! 🏆⚽`;
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'CopaTrack 2026',
+          text: text,
+          url: window.location.href,
+        });
+      } catch (err) {
+        console.log('Error sharing:', err);
+      }
+    } else {
+      navigator.clipboard.writeText(text);
+      alert('Resumo copiado para a área de transferência!');
+    }
+  };
 
   const filteredTeams = useMemo(() => {
     if (!searchTerm) return TEAMS_DATA;
@@ -38,7 +56,7 @@ function App() {
               <Trophy className="text-white" size={24} />
             </div>
             <h1 className="text-2xl font-black tracking-tighter italic">
-              COPA<span className="text-cup-yellow">TRACK</span> 2026
+              MEU <span className="text-cup-yellow">ALBUM</span> 2026
             </h1>
           </div>
 
@@ -58,7 +76,7 @@ function App() {
       <main className="max-w-6xl mx-auto p-4 space-y-8">
         {/* Stats Dashboard */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-xl">
+          <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-xl relative">
             <div className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">Progresso</div>
             <div className="text-2xl font-black text-cup-green">{stats.percentage}%</div>
             <div className="w-full bg-slate-800 h-1.5 rounded-full mt-2">
@@ -67,6 +85,12 @@ function App() {
                 style={{ width: `${stats.percentage}%` }}
               />
             </div>
+            <button 
+              onClick={handleShare}
+              className="absolute top-4 right-4 text-slate-500 hover:text-white transition-colors"
+            >
+              <Share2 size={16} />
+            </button>
           </div>
           
           <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-xl">
@@ -104,7 +128,7 @@ function App() {
                 </span>
               </div>
 
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-3">
                 {team.stickers.map(sticker => (
                   <StickerCard 
                     key={sticker.id}

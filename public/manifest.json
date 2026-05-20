@@ -1,0 +1,17 @@
+{
+  "name": "CopaTrack 2026",
+  "short_name": "CopaTrack",
+  "description": "Acompanhe seu álbum da Copa 2026",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#059669",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
