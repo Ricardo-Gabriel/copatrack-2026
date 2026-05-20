@@ -1,26 +1,61 @@
 import { useState, useEffect } from 'react';
+import { doc, getDoc, setDoc, onSnapshot } from "firebase/firestore";
+import { onAuthStateChanged, User } from "firebase/auth";
+import { auth, db } from "../lib/firebase";
 import type { Transaction, AppState, TeamMetadata } from '../types';
 
 export function useCollection() {
-  const [state, setState] = useState<AppState>(() => {
-    const saved = localStorage.getItem('copatrack-2026-data');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      // Initialize teamsMetadata if it doesn't exist
-      if (!parsed.teamsMetadata) parsed.teamsMetadata = {};
-      return parsed;
-    }
-    
-    return {
-      collection: {},
-      history: [],
-      teamsMetadata: {}
-    };
+  const [user, setUser] = useState<User | null>(null);
+  const [state, setState] = useState<AppState>({
+    collection: {},
+    history: [],
+    teamsMetadata: {}
   });
 
+  // 1. Monitorar estado de autenticação
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      if (!currentUser) {
+        // Se deslogar, carregar do LocalStorage
+        const saved = localStorage.getItem('copatrack-2026-data');
+        if (saved) setState(JSON.parse(saved));
+      }
+    });
+    return unsubscribe;
+  }, []);
+
+  // 2. Sincronizar com Firestore quando logado
+  useEffect(() => {
+    if (!user) return;
+
+    const docRef = doc(db, "users", user.uid);
+    
+    // Escutar mudanças em tempo real no banco
+    const unsubscribe = onSnapshot(docRef, (docSnap) => {
+      if (docSnap.exists()) {
+        setState(docSnap.data() as AppState);
+      } else {
+        // Se for um novo usuário, inicializar o banco com os dados locais atuais
+        const localData = localStorage.getItem('copatrack-2026-data');
+        const initialData = localData ? JSON.parse(localData) : state;
+        setDoc(docRef, initialData);
+      }
+    });
+
+    return unsubscribe;
+  }, [user]);
+
+  // 3. Persistir localmente para redundância
   useEffect(() => {
     localStorage.setItem('copatrack-2026-data', JSON.stringify(state));
-  }, [state]);
+    
+    // Se logado, salvar também no Firestore (debounced seria melhor, mas vamos simplificar)
+    if (user) {
+      const docRef = doc(db, "users", user.uid);
+      setDoc(docRef, state, { merge: true });
+    }
+  }, [state, user]);
 
   const updateSticker = (id: string, delta: number, details?: string) => {
     setState(prev => {
@@ -109,6 +144,7 @@ export function useCollection() {
     collection: state.collection, 
     history: state.history, 
     teamsMetadata: state.teamsMetadata,
+    user,
     updateSticker,
     executeTrade,
     updateTeamMetadata
