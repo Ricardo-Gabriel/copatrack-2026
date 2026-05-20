@@ -5,8 +5,7 @@ import App from './App.tsx'
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    const swPath = import.meta.env.MODE === 'production' ? '/copatrack-2026/sw.js' : '/sw.js';
-    navigator.serviceWorker.register(swPath).catch(err => {
+    navigator.serviceWorker.register('./sw.js').catch(err => {
       console.log('SW registration failed: ', err);
     });
   });

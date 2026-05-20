@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { Transaction, AppState, Trade } from '../types';
+import type { Transaction, AppState } from '../types';
 
 export function useCollection() {
   const [state, setState] = useState<AppState>(() => {
