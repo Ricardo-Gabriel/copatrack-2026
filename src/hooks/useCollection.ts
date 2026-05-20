@@ -46,43 +46,43 @@ export function useCollection() {
     });
   };
 
-  const executeTrade = (trade: Omit<Trade, 'id' | 'timestamp'>) => {
+  const executeTrade = (trade: { stickersOut: string[]; stickersIn: string[]; partnerName: string }) => {
     setState(prev => {
       const newCollection = { ...prev.collection };
       const newHistory = [...prev.history];
       const timestamp = Date.now();
 
-      // Processar figurinha que SAU (out)
-      if (trade.stickerOutId) {
-        const current = newCollection[trade.stickerOutId] || 0;
+      // Processar figurinhas que SAÍRAM (out)
+      trade.stickersOut.forEach(id => {
+        const current = newCollection[id] || 0;
         if (current > 0) {
           const next = current - 1;
-          if (next === 0) delete newCollection[trade.stickerOutId];
-          else newCollection[trade.stickerOutId] = next;
+          if (next === 0) delete newCollection[id];
+          else newCollection[id] = next;
 
           newHistory.unshift({
             id: crypto.randomUUID(),
             timestamp,
-            stickerId: trade.stickerOutId,
+            stickerId: id,
             type: 'trade-out',
             quantity: 1,
             details: `Trocada com ${trade.partnerName || 'alguém'}`
           });
         }
-      }
+      });
 
-      // Processar figurinha que ENTROU (in)
-      if (trade.stickerInId) {
-        newCollection[trade.stickerInId] = (newCollection[trade.stickerInId] || 0) + 1;
+      // Processar figurinhas que ENTRARAM (in)
+      trade.stickersIn.forEach(id => {
+        newCollection[id] = (newCollection[id] || 0) + 1;
         newHistory.unshift({
           id: crypto.randomUUID(),
           timestamp,
-          stickerId: trade.stickerInId,
+          stickerId: id,
           type: 'trade-in',
           quantity: 1,
           details: `Recebida de ${trade.partnerName || 'alguém'}`
         });
-      }
+      });
 
       return {
         collection: newCollection,
