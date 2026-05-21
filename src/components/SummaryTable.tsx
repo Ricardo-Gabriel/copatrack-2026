@@ -21,7 +21,7 @@ export function SummaryTable({ collection, teamsMetadata }: SummaryTableProps) {
       const element = tableRef.current;
       
       const canvas = await html2canvas(element, {
-        scale: 2,
+        scale: 2, 
         backgroundColor: '#020617',
         useCORS: true,
         allowTaint: true,
@@ -38,7 +38,7 @@ export function SummaryTable({ collection, teamsMetadata }: SummaryTableProps) {
       const pdfHeight = canvas.height / 2;
 
       const pdf = new jsPDF({
-        orientation: 'landscape',
+        orientation: pdfWidth > pdfHeight ? 'landscape' : 'portrait',
         unit: 'px',
         format: [pdfWidth, pdfHeight]
       });
@@ -157,26 +157,6 @@ export function SummaryTable({ collection, teamsMetadata }: SummaryTableProps) {
               <div className="flex items-center gap-1">
                 <div className="w-2 h-2 bg-[#0f172a] border border-[#1e293b] rounded-[1px]"></div>
                 <span className="text-[7px] text-[#64748b] font-bold">NÃO</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-          
-          <div className="mt-8 pt-8 border-t border-[#1e293b] flex justify-between items-end">
-            <div className="text-[10px] text-[#475569] font-bold uppercase">
-              Gerado em: {new Date().toLocaleString('pt-BR')}
-            </div>
-            <div className="flex gap-6">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-[#05966933] border border-[#059669] rounded"></div>
-                <span className="text-[10px] text-[#64748b] font-bold">OBTIDA</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-[#0f172a] border border-[#1e293b] rounded"></div>
-                <span className="text-[10px] text-[#64748b] font-bold">FALTANDO</span>
               </div>
             </div>
           </div>
