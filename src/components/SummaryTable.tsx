@@ -88,8 +88,8 @@ export function SummaryTable({ collection, teamsMetadata }: SummaryTableProps) {
 
             if (stickerValue !== '-') {
               // Se tem a figurinha, aplicar cores da seleção
-              data.cell.styles.fillColor = meta.primaryColor;
-              data.cell.styles.textColor = meta.secondaryColor;
+              data.cell.styles.fillColor = meta.primaryColor || '#1E40AF';
+              data.cell.styles.textColor = meta.secondaryColor || '#FFFFFF';
               data.cell.styles.fontStyle = 'bold';
             }
           }
