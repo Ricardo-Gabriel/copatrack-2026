@@ -3,8 +3,8 @@ import { Download, Table as TableIcon } from 'lucide-react';
 import { TEAMS_DATA } from '../data/stickers';
 import { FLAG_IMAGES } from '../data/flags';
 import type { CollectionState, TeamMetadata } from '../types';
-import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 interface SummaryTableProps {
   collection: CollectionState;
@@ -14,40 +14,93 @@ interface SummaryTableProps {
 export function SummaryTable({ collection, teamsMetadata }: SummaryTableProps) {
   const tableRef = useRef<HTMLDivElement>(null);
 
-  const downloadPDF = async () => {
-    if (!tableRef.current) return;
-    
+  const downloadPDF = () => {
     try {
-      const element = tableRef.current;
-      
-      const canvas = await html2canvas(element, {
-        scale: 2, 
-        backgroundColor: '#020617',
-        useCORS: true,
-        allowTaint: true,
-        width: element.scrollWidth,
-        height: element.scrollHeight,
-        windowWidth: element.scrollWidth,
-        windowHeight: element.scrollHeight,
-        x: 0,
-        y: 0
-      });
-      
-      const imgData = canvas.toDataURL('image/png');
-      const pdfWidth = canvas.width / 2;
-      const pdfHeight = canvas.height / 2;
-
       const pdf = new jsPDF({
-        orientation: pdfWidth > pdfHeight ? 'landscape' : 'portrait',
-        unit: 'px',
-        format: [pdfWidth, pdfHeight]
+        orientation: 'landscape',
+        unit: 'mm',
+        format: 'a4'
       });
+
+      // Cabeçalho do PDF
+      pdf.setFillColor(2, 6, 23); // Slate 950
+      pdf.rect(0, 0, 297, 210, 'F');
       
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save('copatrack-resumo-compacto.pdf');
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(18);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('COPATRACK 2026', 14, 15);
+      
+      pdf.setFontSize(10);
+      pdf.setTextColor(100, 116, 139);
+      pdf.text('RELATÓRIO DE INVENTÁRIO COMPLETO', 14, 22);
+
+      const tableData = TEAMS_DATA.map(team => {
+        const meta = teamsMetadata[team.id] || { 
+          name: team.name, 
+          primaryColor: team.primaryColor || '#1E40AF',
+          secondaryColor: team.secondaryColor || '#FFFFFF'
+        };
+
+        const row = [team.id]; // Primeira coluna é o ID do país
+        
+        for (let i = 0; i < 20; i++) {
+          const sticker = team.stickers[i];
+          if (!sticker) {
+            row.push('');
+          } else {
+            const qty = collection[sticker.id] || 0;
+            row.push(isFinite(qty) && qty > 0 ? sticker.id : '-');
+          }
+        }
+        return { data: row, meta };
+      });
+
+      autoTable(pdf, {
+        head: [['País', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20']],
+        body: tableData.map(r => r.data),
+        startY: 30,
+        styles: {
+          fontSize: 6,
+          cellPadding: 1,
+          valign: 'middle',
+          halign: 'center',
+          fillColor: [15, 23, 42], // Slate 900
+          textColor: [71, 85, 105], // Slate 600
+          lineColor: [30, 41, 59], // Slate 800
+          lineWidth: 0.1,
+        },
+        headStyles: {
+          fillColor: [2, 6, 23],
+          textColor: [100, 116, 139],
+          fontSize: 7,
+          fontStyle: 'bold'
+        },
+        columnStyles: {
+          0: { halign: 'left', fontStyle: 'bold', fontSize: 7, textColor: [255, 255, 255] }
+        },
+        didParseCell: (data) => {
+          // Pular a primeira coluna (nome do país)
+          if (data.section === 'body' && data.column.index !== 0) {
+            const teamIndex = data.row.index;
+            const stickerValue = data.cell.text[0];
+            const meta = tableData[teamIndex].meta;
+
+            if (stickerValue !== '-') {
+              // Se tem a figurinha, aplicar cores da seleção
+              data.cell.styles.fillColor = meta.primaryColor;
+              data.cell.styles.textColor = meta.secondaryColor;
+              data.cell.styles.fontStyle = 'bold';
+            }
+          }
+        },
+        theme: 'grid'
+      });
+
+      pdf.save('copatrack-resumo.pdf');
     } catch (err) {
       console.error('Erro ao gerar PDF:', err);
-      alert('Houve um erro ao gerar o PDF.');
+      alert('Houve um erro ao gerar o PDF direto.');
     }
   };
 
