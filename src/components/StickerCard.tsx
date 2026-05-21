@@ -26,7 +26,11 @@ export function StickerCard({ sticker, quantity, onUpdate, colors }: StickerCard
 
   const badgeStyle = isOwned && colors ? {
     backgroundColor: sticker.isSpecial ? '#FDC82F' : colors.primary,
-    color: sticker.isSpecial ? '#0F172A' : '#FFFFFF'
+    color: sticker.isSpecial ? '#0F172A' : (colors.secondary || '#FFFFFF')
+  } : {};
+
+  const idStyle = isOwned && colors ? {
+    color: colors.secondary || '#64748B'
   } : {};
 
   return (
@@ -39,7 +43,10 @@ export function StickerCard({ sticker, quantity, onUpdate, colors }: StickerCard
           : "bg-slate-800/50 border-slate-700 opacity-60 hover:opacity-100"
       )}
     >
-      <div className="text-[10px] font-black text-slate-500 mb-1">
+      <div 
+        style={idStyle}
+        className="text-[10px] font-black text-slate-500 mb-1"
+      >
         {sticker.id}
       </div>
       
