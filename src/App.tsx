@@ -4,13 +4,14 @@ import { StickerCard } from './components/StickerCard';
 import { TradeModal } from './components/TradeModal';
 import { TeamEditorModal } from './components/TeamEditorModal';
 import { AuthModal } from './components/AuthModal';
+import { SummaryTable } from './components/SummaryTable';
 import { FLAG_IMAGES } from './data/flags';
 import { auth } from './lib/firebase';
 import { signOut } from 'firebase/auth';
 import { 
   Trophy, Search, Share2, LayoutGrid, Copy, Ban, 
   History as HistoryIcon, X, ArrowRightLeft, Palette, 
-  User as UserIcon, LogOut 
+  User as UserIcon, LogOut, Table as TableIcon 
 } from 'lucide-react';
 import { useState, useMemo } from 'react';
 import { clsx, type ClassValue } from 'clsx';
@@ -21,7 +22,7 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-type ViewMode = 'all' | 'missing' | 'duplicates' | 'history';
+type ViewMode = 'all' | 'missing' | 'duplicates' | 'history' | 'summary';
 
 function App() {
   const { collection, history, teamsMetadata, user, updateSticker, executeTrade, updateTeamMetadata } = useCollection();
@@ -213,7 +214,9 @@ function App() {
           </button>
         </div>
 
-        {viewMode === 'history' ? (
+        {viewMode === 'summary' ? (
+          <SummaryTable collection={collection} teamsMetadata={teamsMetadata} />
+        ) : viewMode === 'history' ? (
           <section className="space-y-4">
             <h2 className="text-xl font-bold uppercase tracking-tight flex items-center gap-2">
               <HistoryIcon size={20} /> Histórico de Atividades
@@ -377,6 +380,17 @@ function App() {
           >
             <Copy size={20} />
             <span className="text-[10px] font-bold">Repetidas</span>
+          </button>
+
+          <button 
+            onClick={() => setViewMode('summary')}
+            className={cn(
+              "flex flex-col items-center gap-1 p-2 transition-colors",
+              viewMode === 'summary' ? "text-cup-green" : "text-slate-500"
+            )}
+          >
+            <TableIcon size={20} />
+            <span className="text-[10px] font-bold">Resumo</span>
           </button>
 
           <button 

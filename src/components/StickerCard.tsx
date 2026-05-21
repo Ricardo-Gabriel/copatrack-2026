@@ -29,7 +29,7 @@ export function StickerCard({ sticker, quantity, onUpdate, colors }: StickerCard
     color: sticker.isSpecial ? '#0F172A' : (colors.secondary || '#FFFFFF')
   } : {};
 
-  const idStyle = isOwned && colors ? {
+  const textStyle = isOwned && colors ? {
     color: colors.secondary || '#64748B'
   } : {};
 
@@ -44,7 +44,7 @@ export function StickerCard({ sticker, quantity, onUpdate, colors }: StickerCard
       )}
     >
       <div 
-        style={idStyle}
+        style={textStyle}
         className="text-[10px] font-black text-slate-500 mb-1"
       >
         {sticker.id}
@@ -62,7 +62,10 @@ export function StickerCard({ sticker, quantity, onUpdate, colors }: StickerCard
         {sticker.number}
       </div>
 
-      <div className="text-[10px] text-center font-bold line-clamp-1 text-slate-300">
+      <div 
+        style={textStyle}
+        className="text-[10px] text-center font-bold line-clamp-1 text-slate-300"
+      >
         {sticker.name}
       </div>
 
