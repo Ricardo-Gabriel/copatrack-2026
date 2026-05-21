@@ -6,51 +6,81 @@ import type { Transaction, AppState, TeamMetadata } from '../types';
 
 export function useCollection() {
   const [user, setUser] = useState<User | null>(null);
-  const [state, setState] = useState<AppState>({
-    collection: {},
-    history: [],
-    teamsMetadata: {}
+  
+  // Inicialização robusta carregando IMEDIATAMENTE do LocalStorage
+  const [state, setState] = useState<AppState>(() => {
+    const saved = localStorage.getItem('copatrack-2026-data');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        return {
+          collection: parsed.collection || {},
+          history: parsed.history || [],
+          teamsMetadata: parsed.teamsMetadata || {}
+        };
+      } catch (e) {
+        console.error("Erro ao carregar dados locais:", e);
+      }
+    }
+    return {
+      collection: {},
+      history: [],
+      teamsMetadata: {}
+    };
   });
 
   // 1. Monitorar estado de autenticação
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-      if (!currentUser) {
-        // Se deslogar, carregar do LocalStorage
-        const saved = localStorage.getItem('copatrack-2026-data');
-        if (saved) setState(JSON.parse(saved));
-      }
+      // Quando o estado do usuário muda, se ele deslogar, mantemos o estado atual
+      // que já está sendo salvo no LocalStorage pelo Effect #3
     });
     return unsubscribe;
   }, []);
 
-  // 2. Sincronizar com Firestore quando logado
+  // 2. Sincronizar com Firestore quando logado (apenas se houver internet e projeto configurado)
   useEffect(() => {
-    if (!user) return;
+    if (!user || !db) return;
 
-    const docRef = doc(db, "users", user.uid);
-    
-    const unsubscribe = onSnapshot(docRef, (docSnap) => {
-      if (docSnap.exists()) {
-        setState(docSnap.data() as AppState);
-      } else {
-        const localData = localStorage.getItem('copatrack-2026-data');
-        const initialData = localData ? JSON.parse(localData) : state;
-        setDoc(docRef, initialData);
-      }
-    });
+    try {
+      const docRef = doc(db, "users", user.uid);
+      
+      const unsubscribe = onSnapshot(docRef, (docSnap) => {
+        if (docSnap.exists()) {
+          const cloudData = docSnap.data() as AppState;
+          // Só atualizamos o estado se os dados da nuvem forem diferentes dos locais
+          // para evitar loops infinitos ou resets acidentais
+          setState(prev => {
+            if (JSON.stringify(prev) !== JSON.stringify(cloudData)) {
+              return cloudData;
+            }
+            return prev;
+          });
+        } else {
+          // Se for um novo usuário, inicializar o banco com os dados locais atuais
+          setDoc(docRef, state);
+        }
+      }, (error) => {
+        console.warn("Firestore Sync Error (provavelmente não configurado):", error);
+      });
 
-    return unsubscribe;
+      return unsubscribe;
+    } catch (e) {
+      console.warn("Firebase não inicializado corretamente.");
+    }
   }, [user]);
 
-  // 3. Persistir localmente e na nuvem
+  // 3. PERSISTÊNCIA CRÍTICA: Salvar no LocalStorage TODA VEZ que o estado mudar
   useEffect(() => {
     localStorage.setItem('copatrack-2026-data', JSON.stringify(state));
     
-    if (user) {
+    // Se logado, tentar salvar também no Firestore
+    if (user && db) {
       const docRef = doc(db, "users", user.uid);
-      setDoc(docRef, state, { merge: true });
+      setDoc(docRef, state, { merge: true }).catch(e => {
+        console.warn("Erro ao salvar na nuvem:", e);
+      });
     }
   }, [state, user]);
 
