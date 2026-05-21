@@ -2,14 +2,15 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
-// Substitua pelas suas credenciais do Firebase Console
+// Credenciais reais do projeto do usuário
 const firebaseConfig = {
-  apiKey: "SUA_API_KEY",
-  authDomain: "SEU_PROJETO.firebaseapp.com",
-  projectId: "SEU_PROJETO",
-  storageBucket: "SEU_PROJETO.appspot.com",
-  messagingSenderId: "SEU_ID",
-  appId: "SEU_APP_ID"
+  apiKey: "AIzaSyBOc7APCKlHsg63nj36WTHLF_NRmtOTGLI",
+  authDomain: "copatrack-2026.firebaseapp.com",
+  projectId: "copatrack-2026",
+  storageBucket: "copatrack-2026.firebasestorage.app",
+  messagingSenderId: "608559116906",
+  appId: "1:608559116906:web:cd18b09bb5baf8bdc4d013",
+  measurementId: "G-8LMS1W1DWV"
 };
 
 const app = initializeApp(firebaseConfig);
