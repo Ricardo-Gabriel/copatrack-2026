@@ -6,8 +6,7 @@ import { TeamEditorModal } from './components/TeamEditorModal';
 import { AuthModal } from './components/AuthModal';
 import { SummaryTable } from './components/SummaryTable';
 import { FLAG_IMAGES } from './data/flags';
-import { auth } from './lib/firebase';
-import { signOut } from 'firebase/auth';
+import { supabase } from './lib/supabase';
 import { 
   Trophy, Search, Share2, LayoutGrid, Copy, Ban, 
   History as HistoryIcon, X, ArrowRightLeft, Palette, 
@@ -107,7 +106,7 @@ function App() {
             <div className="flex items-center gap-2 md:hidden">
               {user ? (
                 <button 
-                  onClick={() => signOut(auth)}
+                  onClick={() => supabase.auth.signOut()}
                   className="p-2 bg-slate-800 rounded-full text-red-400 hover:text-red-300"
                   title="Sair"
                 >
@@ -149,7 +148,7 @@ function App() {
                 <div className="flex items-center gap-3 bg-slate-800/50 pl-4 pr-2 py-1 rounded-full border border-slate-700">
                   <span className="text-[10px] font-bold text-slate-400 truncate max-w-[100px]">{user.email}</span>
                   <button 
-                    onClick={() => signOut(auth)}
+                    onClick={() => supabase.auth.signOut()}
                     className="p-1.5 hover:bg-red-500/20 rounded-full text-red-500 transition-colors"
                   >
                     <LogOut size={16} />

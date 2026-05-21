@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { LogIn, UserPlus, X, Mail, Lock, Loader2 } from 'lucide-react';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../lib/firebase';
+import { supabase } from '../lib/supabase';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -24,9 +23,18 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
     try {
       if (isLogin) {
-        await signInWithEmailAndPassword(auth, email, password);
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (error) throw error;
       } else {
-        await createUserWithEmailAndPassword(auth, email, password);
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+        });
+        if (error) throw error;
+        alert('Confirme seu e-mail para ativar a conta!');
       }
       onClose();
     } catch (err: any) {
@@ -49,61 +57,63 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <div className="p-6 space-y-4">
           {error && (
             <div className="bg-red-500/10 border border-red-500/50 text-red-500 p-3 rounded-xl text-xs font-bold">
               {error}
             </div>
           )}
 
-          <div className="space-y-1.5">
-            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">E-mail</label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
-              <input 
-                type="email"
-                required
-                className="w-full bg-slate-800 border-none rounded-xl py-3 pl-10 pr-4 text-sm focus:ring-2 focus:ring-cup-green outline-none"
-                placeholder="seu@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">E-mail</label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
+                <input 
+                  type="email"
+                  required
+                  className="w-full bg-slate-800 border-none rounded-xl py-3 pl-10 pr-4 text-sm focus:ring-2 focus:ring-cup-green outline-none"
+                  placeholder="seu@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
             </div>
-          </div>
 
-          <div className="space-y-1.5">
-            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Senha</label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
-              <input 
-                type="password"
-                required
-                className="w-full bg-slate-800 border-none rounded-xl py-3 pl-10 pr-4 text-sm focus:ring-2 focus:ring-cup-green outline-none"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Senha</label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
+                <input 
+                  type="password"
+                  required
+                  className="w-full bg-slate-800 border-none rounded-xl py-3 pl-10 pr-4 text-sm focus:ring-2 focus:ring-cup-green outline-none"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
             </div>
-          </div>
 
-          <button 
-            type="submit"
-            disabled={loading}
-            className="w-full bg-cup-green hover:bg-green-600 disabled:opacity-50 text-white font-black py-4 rounded-2xl transition-all shadow-lg shadow-green-900/20 flex items-center justify-center gap-2 mt-2"
-          >
-            {loading ? <Loader2 className="animate-spin" size={20} /> : (isLogin ? 'ENTRAR AGORA' : 'CRIAR MINHA CONTA')}
-          </button>
-
-          <div className="text-center pt-2">
             <button 
-              type="button"
-              onClick={() => setIsLogin(!isLogin)}
-              className="text-xs font-bold text-slate-500 hover:text-white transition-colors"
+              type="submit"
+              disabled={loading}
+              className="w-full bg-cup-green hover:bg-green-600 disabled:opacity-50 text-white font-black py-4 rounded-2xl transition-all shadow-lg shadow-green-900/20 flex items-center justify-center gap-2"
             >
-              {isLogin ? 'Não tem uma conta? Cadastre-se' : 'Já tem uma conta? Faça login'}
+              {loading ? <Loader2 className="animate-spin" size={20} /> : (isLogin ? 'ENTRAR AGORA' : 'CRIAR MINHA CONTA')}
             </button>
-          </div>
-        </form>
+
+            <div className="text-center pt-2">
+              <button 
+                type="button"
+                onClick={() => setIsLogin(!isLogin)}
+                className="text-xs font-bold text-slate-500 hover:text-white transition-colors"
+              >
+                {isLogin ? 'Não tem uma conta? Cadastre-se' : 'Já tem uma conta? Faça login'}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

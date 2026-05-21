@@ -1,15 +1,17 @@
 import { useState, useEffect } from 'react';
-import { doc, setDoc, onSnapshot } from "firebase/firestore";
-import { onAuthStateChanged, type User } from "firebase/auth";
-import { auth, db } from "../lib/firebase";
+import { supabase } from '../lib/supabase';
+import type { User } from '@supabase/supabase-js';
 import type { Transaction, AppState, TeamMetadata } from '../types';
+
+const LOCAL_STORAGE_KEY = 'copatrack-2026-data';
 
 export function useCollection() {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
   
-  // Inicialização robusta carregando IMEDIATAMENTE do LocalStorage
+  // 1. Estado inicial do LocalStorage
   const [state, setState] = useState<AppState>(() => {
-    const saved = localStorage.getItem('copatrack-2026-data');
+    const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -22,148 +24,174 @@ export function useCollection() {
         console.error("Erro ao carregar dados locais:", e);
       }
     }
-    return {
-      collection: {},
-      history: [],
-      teamsMetadata: {}
-    };
+    return { collection: {}, history: [], teamsMetadata: {} };
   });
 
-  // 1. Monitorar estado de autenticação
+  // 2. Monitorar estado de autenticação
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      // Quando o estado do usuário muda, se ele deslogar, mantemos o estado atual
-      // que já está sendo salvo no LocalStorage pelo Effect #3
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      setLoading(false);
     });
-    return unsubscribe;
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  // 2. Sincronizar com Firestore quando logado (apenas se houver internet e projeto configurado)
+  // 3. Sincronizar com Supabase
   useEffect(() => {
-    if (!user || !db) return;
+    if (!user) return;
 
-    try {
-      const docRef = doc(db, "users", user.uid);
-      
-      const unsubscribe = onSnapshot(docRef, (docSnap) => {
-        if (docSnap.exists()) {
-          const cloudData = docSnap.data() as AppState;
-          // Só atualizamos o estado se os dados da nuvem forem diferentes dos locais
-          // para evitar loops infinitos ou resets acidentais
-          setState(prev => {
-            if (JSON.stringify(prev) !== JSON.stringify(cloudData)) {
-              return cloudData;
-            }
-            return prev;
-          });
-        } else {
-          // Se for um novo usuário, inicializar o banco com os dados locais atuais
-          setDoc(docRef, state);
-        }
-      }, (error) => {
-        console.warn("Firestore Sync Error (provavelmente não configurado):", error);
-      });
+    const fetchData = async () => {
+      const { data, error } = await supabase
+        .from('user_data')
+        .select('state')
+        .eq('id', user.id)
+        .single();
 
-      return unsubscribe;
-    } catch (e) {
-      console.warn("Firebase não inicializado corretamente.");
-    }
-  }, [user]);
-
-  // 3. PERSISTÊNCIA CRÍTICA: Salvar no LocalStorage TODA VEZ que o estado mudar
-  useEffect(() => {
-    localStorage.setItem('copatrack-2026-data', JSON.stringify(state));
-    
-    // Se logado, tentar salvar também no Firestore
-    if (user && db) {
-      const docRef = doc(db, "users", user.uid);
-      setDoc(docRef, state, { merge: true }).catch(e => {
-        console.warn("Erro ao salvar na nuvem:", e);
-      });
-    }
-  }, [state, user]);
-
-  const updateSticker = (id: string, delta: number, details?: string) => {
-    setState(prev => {
-      const current = prev.collection[id] || 0;
-      const next = Math.max(0, current + delta);
-      
-      const newCollection = { ...prev.collection };
-      if (next === 0) {
-        delete newCollection[id];
-      } else {
-        newCollection[id] = next;
+      if (error && error.code !== 'PGRST116') { // PGRST116 = nada encontrado
+        console.error("Erro ao buscar dados do Supabase:", error);
+        return;
       }
 
-      const transaction: Transaction = {
-        id: crypto.randomUUID(),
-        timestamp: Date.now(),
-        stickerId: id,
-        type: delta > 0 ? 'add' : 'remove',
-        quantity: Math.abs(delta),
-        details
-      };
+      if (data?.state) {
+        setState(data.state as AppState);
+      } else {
+        // Se não houver dados no Supabase, subir os locais
+        const localData = localStorage.getItem(LOCAL_STORAGE_KEY);
+        if (localData) {
+          try {
+            const parsed = JSON.parse(localData);
+            await supabase.from('user_data').upsert({
+              id: user.id,
+              state: parsed,
+              updated_at: new Date().toISOString()
+            });
+          } catch (e) {
+            console.error("Erro ao subir dados iniciais:", e);
+          }
+        }
+      }
+    };
 
-      return {
-        ...prev,
-        collection: newCollection,
-        history: [transaction, ...prev.history].slice(0, 100)
-      };
+    fetchData();
+
+    // Setup realtime subscription
+    const channel = supabase
+      .channel(`user_data:${user.id}`)
+      .on('postgres_changes', { 
+        event: 'UPDATE', 
+        schema: 'public', 
+        table: 'user_data',
+        filter: `id=eq.${user.id}`
+      }, (payload) => {
+        if (payload.new && payload.new.state) {
+          setState(payload.new.state as AppState);
+        }
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user]);
+
+  const persistChange = async (newState: AppState) => {
+    setState(newState);
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newState));
+    
+    if (user) {
+      try {
+        await supabase.from('user_data').upsert({
+          id: user.id,
+          state: newState,
+          updated_at: new Date().toISOString()
+        });
+      } catch (e) {
+        console.warn("Erro ao salvar no Supabase (será sincronizado depois):", e);
+      }
+    }
+  };
+
+  const updateSticker = (id: string, delta: number, details?: string) => {
+    const current = state.collection[id] || 0;
+    const next = Math.max(0, current + delta);
+    
+    const newCollection = { ...state.collection };
+    if (next === 0) {
+      delete newCollection[id];
+    } else {
+      newCollection[id] = next;
+    }
+
+    const transaction: Transaction = {
+      id: crypto.randomUUID(),
+      timestamp: Date.now(),
+      stickerId: id,
+      type: delta > 0 ? 'add' : 'remove',
+      quantity: Math.abs(delta),
+      details
+    };
+
+    persistChange({
+      ...state,
+      collection: newCollection,
+      history: [transaction, ...state.history].slice(0, 100)
     });
   };
 
   const updateTeamMetadata = (teamId: string, metadata: TeamMetadata) => {
-    setState(prev => ({
-      ...prev,
+    persistChange({
+      ...state,
       teamsMetadata: {
-        ...prev.teamsMetadata,
+        ...state.teamsMetadata,
         [teamId]: metadata
       }
-    }));
+    });
   };
 
   const executeTrade = (trade: { stickersOut: string[]; stickersIn: string[]; partnerName: string }) => {
-    setState(prev => {
-      const newCollection = { ...prev.collection };
-      const newHistory = [...prev.history];
-      const timestamp = Date.now();
+    const newCollection = { ...state.collection };
+    const newHistory = [...state.history];
+    const timestamp = Date.now();
 
-      trade.stickersOut.forEach(id => {
-        const current = newCollection[id] || 0;
-        if (current > 0) {
-          const next = current - 1;
-          if (next === 0) delete newCollection[id];
-          else newCollection[id] = next;
+    trade.stickersOut.forEach(id => {
+      const current = newCollection[id] || 0;
+      if (current > 0) {
+        const next = current - 1;
+        if (next === 0) delete newCollection[id];
+        else newCollection[id] = next;
 
-          newHistory.unshift({
-            id: crypto.randomUUID(),
-            timestamp,
-            stickerId: id,
-            type: 'trade-out',
-            quantity: 1,
-            details: `Trocada com ${trade.partnerName || 'alguém'}`
-          });
-        }
-      });
-
-      trade.stickersIn.forEach(id => {
-        newCollection[id] = (newCollection[id] || 0) + 1;
         newHistory.unshift({
           id: crypto.randomUUID(),
           timestamp,
           stickerId: id,
-          type: 'trade-in',
+          type: 'trade-out',
           quantity: 1,
-          details: `Recebida de ${trade.partnerName || 'alguém'}`
+          details: `Trocada com ${trade.partnerName || 'alguém'}`
         });
-      });
+      }
+    });
 
-      return {
-        ...prev,
-        collection: newCollection,
-        history: newHistory.slice(0, 100)
-      };
+    trade.stickersIn.forEach(id => {
+      newCollection[id] = (newCollection[id] || 0) + 1;
+      newHistory.unshift({
+        id: crypto.randomUUID(),
+        timestamp,
+        stickerId: id,
+        type: 'trade-in',
+        quantity: 1,
+        details: `Recebida de ${trade.partnerName || 'alguém'}`
+      });
+    });
+
+    persistChange({
+      ...state,
+      collection: newCollection,
+      history: newHistory.slice(0, 100)
     });
   };
 
@@ -172,6 +200,7 @@ export function useCollection() {
     history: state.history, 
     teamsMetadata: state.teamsMetadata,
     user,
+    loading,
     updateSticker,
     executeTrade,
     updateTeamMetadata
