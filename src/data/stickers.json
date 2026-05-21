@@ -1,6 +1,6 @@
 [
   {
-    "id": "UNK",
+    "id": "PNN",
     "name": "Collection",
     "flag": "🏳️",
     "stickers": [
@@ -16,6 +16,260 @@
         "weight": "N/A",
         "currentClub": "N/A",
         "isSpecial": true
+      }
+    ]
+  },
+  {
+    "id": "FWC",
+    "name": "FIFA World Cup 2026",
+    "flag": "🏳️",
+    "stickers": [
+      {
+        "id": "FWC1",
+        "number": "1",
+        "name": "Official Emblem",
+        "teamId": "FWC",
+        "category": "Brand / Emblem",
+        "rarity": "Foil",
+        "birthDate": "N/A",
+        "height": "N/A",
+        "weight": "N/A",
+        "currentClub": "N/A",
+        "isSpecial": true
+      },
+      {
+        "id": "FWC2",
+        "number": "2",
+        "name": "Official Emblem",
+        "teamId": "FWC",
+        "category": "Brand / Emblem",
+        "rarity": "Foil",
+        "birthDate": "N/A",
+        "height": "N/A",
+        "weight": "N/A",
+        "currentClub": "N/A",
+        "isSpecial": true
+      },
+      {
+        "id": "FWC3",
+        "number": "3",
+        "name": "Official Mascots",
+        "teamId": "FWC",
+        "category": "Host / Tournament",
+        "rarity": "Foil",
+        "birthDate": "N/A",
+        "height": "N/A",
+        "weight": "N/A",
+        "currentClub": "N/A",
+        "isSpecial": false
+      },
+      {
+        "id": "FWC4",
+        "number": "4",
+        "name": "Official Slogan",
+        "teamId": "FWC",
+        "category": "Host / Tournament",
+        "rarity": "Foil",
+        "birthDate": "N/A",
+        "height": "N/A",
+        "weight": "N/A",
+        "currentClub": "N/A",
+        "isSpecial": false
+      },
+      {
+        "id": "FWC5",
+        "number": "5",
+        "name": "Official Ball",
+        "teamId": "FWC",
+        "category": "Host / Tournament",
+        "rarity": "Foil",
+        "birthDate": "N/A",
+        "height": "N/A",
+        "weight": "N/A",
+        "currentClub": "N/A",
+        "isSpecial": false
+      },
+      {
+        "id": "FWC6",
+        "number": "6",
+        "name": "Canada - Host Countries & Cities",
+        "teamId": "FWC",
+        "category": "Host / Tournament",
+        "rarity": "Foil",
+        "birthDate": "N/A",
+        "height": "N/A",
+        "weight": "N/A",
+        "currentClub": "N/A",
+        "isSpecial": false
+      },
+      {
+        "id": "FWC7",
+        "number": "7",
+        "name": "Mexico - Host Countries & Cities",
+        "teamId": "FWC",
+        "category": "Host / Tournament",
+        "rarity": "Foil",
+        "birthDate": "N/A",
+        "height": "N/A",
+        "weight": "N/A",
+        "currentClub": "N/A",
+        "isSpecial": false
+      },
+      {
+        "id": "FWC8",
+        "number": "8",
+        "name": "USA - Host Countries & Cities",
+        "teamId": "FWC",
+        "category": "Host / Tournament",
+        "rarity": "Foil",
+        "birthDate": "N/A",
+        "height": "N/A",
+        "weight": "N/A",
+        "currentClub": "N/A",
+        "isSpecial": false
+      },
+      {
+        "id": "FWC9",
+        "number": "9",
+        "name": "Italy 1934 - FIFA Museum",
+        "teamId": "FWC",
+        "category": "FIFA Museum",
+        "rarity": "Foil",
+        "birthDate": "N/A",
+        "height": "N/A",
+        "weight": "N/A",
+        "currentClub": "N/A",
+        "isSpecial": false
+      },
+      {
+        "id": "FWC10",
+        "number": "10",
+        "name": "Uruguay 1950 - FIFA Museum",
+        "teamId": "FWC",
+        "category": "FIFA Museum",
+        "rarity": "Foil",
+        "birthDate": "N/A",
+        "height": "N/A",
+        "weight": "N/A",
+        "currentClub": "N/A",
+        "isSpecial": false
+      },
+      {
+        "id": "FWC11",
+        "number": "11",
+        "name": "West Germany 1954 - FIFA Museum",
+        "teamId": "FWC",
+        "category": "FIFA Museum",
+        "rarity": "Foil",
+        "birthDate": "N/A",
+        "height": "N/A",
+        "weight": "N/A",
+        "currentClub": "N/A",
+        "isSpecial": false
+      },
+      {
+        "id": "FWC12",
+        "number": "12",
+        "name": "Brazil 1962 - FIFA Museum",
+        "teamId": "FWC",
+        "category": "FIFA Museum",
+        "rarity": "Foil",
+        "birthDate": "N/A",
+        "height": "N/A",
+        "weight": "N/A",
+        "currentClub": "N/A",
+        "isSpecial": false
+      },
+      {
+        "id": "FWC13",
+        "number": "13",
+        "name": "West Germany 1974 - FIFA Museum",
+        "teamId": "FWC",
+        "category": "FIFA Museum",
+        "rarity": "Foil",
+        "birthDate": "N/A",
+        "height": "N/A",
+        "weight": "N/A",
+        "currentClub": "N/A",
+        "isSpecial": false
+      },
+      {
+        "id": "FWC14",
+        "number": "14",
+        "name": "Argentina 1986 - FIFA Museum",
+        "teamId": "FWC",
+        "category": "FIFA Museum",
+        "rarity": "Foil",
+        "birthDate": "N/A",
+        "height": "N/A",
+        "weight": "N/A",
+        "currentClub": "N/A",
+        "isSpecial": false
+      },
+      {
+        "id": "FWC15",
+        "number": "15",
+        "name": "Brazil 1994 - FIFA Museum",
+        "teamId": "FWC",
+        "category": "FIFA Museum",
+        "rarity": "Foil",
+        "birthDate": "N/A",
+        "height": "N/A",
+        "weight": "N/A",
+        "currentClub": "N/A",
+        "isSpecial": false
+      },
+      {
+        "id": "FWC16",
+        "number": "16",
+        "name": "Brazil 2002 - FIFA Museum",
+        "teamId": "FWC",
+        "category": "FIFA Museum",
+        "rarity": "Foil",
+        "birthDate": "N/A",
+        "height": "N/A",
+        "weight": "N/A",
+        "currentClub": "N/A",
+        "isSpecial": false
+      },
+      {
+        "id": "FWC17",
+        "number": "17",
+        "name": "Italy 2006 - FIFA Museum",
+        "teamId": "FWC",
+        "category": "FIFA Museum",
+        "rarity": "Foil",
+        "birthDate": "N/A",
+        "height": "N/A",
+        "weight": "N/A",
+        "currentClub": "N/A",
+        "isSpecial": false
+      },
+      {
+        "id": "FWC18",
+        "number": "18",
+        "name": "Germany 2014 - FIFA Museum",
+        "teamId": "FWC",
+        "category": "FIFA Museum",
+        "rarity": "Foil",
+        "birthDate": "N/A",
+        "height": "N/A",
+        "weight": "N/A",
+        "currentClub": "N/A",
+        "isSpecial": false
+      },
+      {
+        "id": "FWC19",
+        "number": "19",
+        "name": "Argentina 2022 - FIFA Museum",
+        "teamId": "FWC",
+        "category": "FIFA Museum",
+        "rarity": "Foil",
+        "birthDate": "N/A",
+        "height": "N/A",
+        "weight": "N/A",
+        "currentClub": "N/A",
+        "isSpecial": false
       }
     ]
   },
@@ -40,15 +294,15 @@
       {
         "id": "ALG2",
         "number": "2",
-        "name": "Team Logo - Algeria",
+        "name": "Anthony Mandréa",
         "teamId": "ALG",
-        "category": "Team Badge",
-        "rarity": "Foil",
+        "category": "Player",
+        "rarity": "Base",
         "birthDate": "N/A",
         "height": "N/A",
         "weight": "N/A",
         "currentClub": "N/A",
-        "isSpecial": true
+        "isSpecial": false
       },
       {
         "id": "ALG3",
@@ -309,15 +563,15 @@
       {
         "id": "ARG2",
         "number": "2",
-        "name": "Team Logo - Argentina",
+        "name": "Emiliano Martínez",
         "teamId": "ARG",
-        "category": "Team Badge",
-        "rarity": "Foil",
+        "category": "Player",
+        "rarity": "Base",
         "birthDate": "N/A",
         "height": "N/A",
         "weight": "N/A",
         "currentClub": "N/A",
-        "isSpecial": true
+        "isSpecial": false
       },
       {
         "id": "ARG3",
@@ -578,15 +832,15 @@
       {
         "id": "AUS2",
         "number": "2",
-        "name": "Team Logo - Australia",
+        "name": "Mathew Ryan",
         "teamId": "AUS",
-        "category": "Team Badge",
-        "rarity": "Foil",
+        "category": "Player",
+        "rarity": "Base",
         "birthDate": "N/A",
         "height": "N/A",
         "weight": "N/A",
         "currentClub": "N/A",
-        "isSpecial": true
+        "isSpecial": false
       },
       {
         "id": "AUS3",
@@ -847,15 +1101,15 @@
       {
         "id": "AUT2",
         "number": "2",
-        "name": "Team Logo - Austria",
+        "name": "Alexander Schlager",
         "teamId": "AUT",
-        "category": "Team Badge",
-        "rarity": "Foil",
+        "category": "Player",
+        "rarity": "Base",
         "birthDate": "N/A",
         "height": "N/A",
         "weight": "N/A",
         "currentClub": "N/A",
-        "isSpecial": true
+        "isSpecial": false
       },
       {
         "id": "AUT3",
@@ -1116,15 +1370,15 @@
       {
         "id": "BEL2",
         "number": "2",
-        "name": "Team Logo - Belgium",
+        "name": "Koen Casteels",
         "teamId": "BEL",
-        "category": "Team Badge",
-        "rarity": "Foil",
+        "category": "Player",
+        "rarity": "Base",
         "birthDate": "N/A",
         "height": "N/A",
         "weight": "N/A",
         "currentClub": "N/A",
-        "isSpecial": true
+        "isSpecial": false
       },
       {
         "id": "BEL3",
@@ -1385,15 +1639,15 @@
       {
         "id": "BIH2",
         "number": "2",
-        "name": "Team Logo - Bosnia and Herzegovina",
+        "name": "Ibrahim Šehić",
         "teamId": "BIH",
-        "category": "Team Badge",
-        "rarity": "Foil",
+        "category": "Player",
+        "rarity": "Base",
         "birthDate": "N/A",
         "height": "N/A",
         "weight": "N/A",
         "currentClub": "N/A",
-        "isSpecial": true
+        "isSpecial": false
       },
       {
         "id": "BIH3",
@@ -1652,15 +1906,15 @@
       {
         "id": "BRA2",
         "number": "2",
-        "name": "Alisson",
+        "name": "Alisson Becker",
         "teamId": "BRA",
         "category": "Player",
-        "rarity": "Foil",
+        "rarity": "Base",
         "birthDate": "N/A",
         "height": "N/A",
         "weight": "N/A",
         "currentClub": "N/A",
-        "isSpecial": true
+        "isSpecial": false
       },
       {
         "id": "BRA3",
@@ -1921,15 +2175,15 @@
       {
         "id": "CAN2",
         "number": "2",
-        "name": "Team Logo - Canada",
+        "name": "Milan Borjan",
         "teamId": "CAN",
-        "category": "Team Badge",
-        "rarity": "Foil",
+        "category": "Player",
+        "rarity": "Base",
         "birthDate": "N/A",
         "height": "N/A",
         "weight": "N/A",
         "currentClub": "N/A",
-        "isSpecial": true
+        "isSpecial": false
       },
       {
         "id": "CAN3",
@@ -2190,15 +2444,15 @@
       {
         "id": "CIV2",
         "number": "2",
-        "name": "Team Logo - Ivory Coast",
+        "name": "Yahia Fofana",
         "teamId": "CIV",
-        "category": "Team Badge",
-        "rarity": "Foil",
+        "category": "Player",
+        "rarity": "Base",
         "birthDate": "N/A",
         "height": "N/A",
         "weight": "N/A",
         "currentClub": "N/A",
-        "isSpecial": true
+        "isSpecial": false
       },
       {
         "id": "CIV3",
@@ -2459,15 +2713,15 @@
       {
         "id": "COD2",
         "number": "2",
-        "name": "Team Logo - Congo DR",
+        "name": "Lionel Mpasi",
         "teamId": "COD",
-        "category": "Team Badge",
-        "rarity": "Foil",
+        "category": "Player",
+        "rarity": "Base",
         "birthDate": "N/A",
         "height": "N/A",
         "weight": "N/A",
         "currentClub": "N/A",
-        "isSpecial": true
+        "isSpecial": false
       },
       {
         "id": "COD3",
@@ -2726,15 +2980,15 @@
       {
         "id": "COL2",
         "number": "2",
-        "name": "Team Logo - Colombia",
+        "name": "Camilo Vargas",
         "teamId": "COL",
-        "category": "Team Badge",
-        "rarity": "Foil",
+        "category": "Player",
+        "rarity": "Base",
         "birthDate": "N/A",
         "height": "N/A",
         "weight": "N/A",
         "currentClub": "N/A",
-        "isSpecial": true
+        "isSpecial": false
       },
       {
         "id": "COL3",
@@ -2993,15 +3247,15 @@
       {
         "id": "CPV2",
         "number": "2",
-        "name": "Team Logo - Cape Verde",
+        "name": "Vozinha",
         "teamId": "CPV",
-        "category": "Team Badge",
-        "rarity": "Foil",
+        "category": "Player",
+        "rarity": "Base",
         "birthDate": "N/A",
         "height": "N/A",
         "weight": "N/A",
         "currentClub": "N/A",
-        "isSpecial": true
+        "isSpecial": false
       },
       {
         "id": "CPV3",
@@ -3260,15 +3514,15 @@
       {
         "id": "CRO2",
         "number": "2",
-        "name": "Team Logo - Croatia",
+        "name": "Dominik Livaković",
         "teamId": "CRO",
-        "category": "Team Badge",
-        "rarity": "Foil",
+        "category": "Player",
+        "rarity": "Base",
         "birthDate": "N/A",
         "height": "N/A",
         "weight": "N/A",
         "currentClub": "N/A",
-        "isSpecial": true
+        "isSpecial": false
       },
       {
         "id": "CRO3",
@@ -3796,15 +4050,15 @@
       {
         "id": "CZE2",
         "number": "2",
-        "name": "Team Logo - Czechia",
+        "name": "Jindřich Staněk",
         "teamId": "CZE",
-        "category": "Team Badge",
-        "rarity": "Foil",
+        "category": "Player",
+        "rarity": "Base",
         "birthDate": "N/A",
         "height": "N/A",
         "weight": "N/A",
         "currentClub": "N/A",
-        "isSpecial": true
+        "isSpecial": false
       },
       {
         "id": "CZE3",
@@ -4063,15 +4317,15 @@
       {
         "id": "ECU2",
         "number": "2",
-        "name": "Team Logo - Ecuador",
+        "name": "Hernán Galíndez",
         "teamId": "ECU",
-        "category": "Team Badge",
-        "rarity": "Foil",
+        "category": "Player",
+        "rarity": "Base",
         "birthDate": "N/A",
         "height": "N/A",
         "weight": "N/A",
         "currentClub": "N/A",
-        "isSpecial": true
+        "isSpecial": false
       },
       {
         "id": "ECU3",
@@ -4332,15 +4586,15 @@
       {
         "id": "EGY2",
         "number": "2",
-        "name": "Team Logo - Egypt",
+        "name": "Mohamed El Shenawy",
         "teamId": "EGY",
-        "category": "Team Badge",
-        "rarity": "Foil",
+        "category": "Player",
+        "rarity": "Base",
         "birthDate": "N/A",
         "height": "N/A",
         "weight": "N/A",
         "currentClub": "N/A",
-        "isSpecial": true
+        "isSpecial": false
       },
       {
         "id": "EGY3",
@@ -4601,15 +4855,15 @@
       {
         "id": "ENG2",
         "number": "2",
-        "name": "Team Logo - England",
+        "name": "Jordan Pickford",
         "teamId": "ENG",
-        "category": "Team Badge",
-        "rarity": "Foil",
+        "category": "Player",
+        "rarity": "Base",
         "birthDate": "N/A",
         "height": "N/A",
         "weight": "N/A",
         "currentClub": "N/A",
-        "isSpecial": true
+        "isSpecial": false
       },
       {
         "id": "ENG3",
@@ -4870,15 +5124,15 @@
       {
         "id": "ESP2",
         "number": "2",
-        "name": "Team Logo - Spain",
+        "name": "Unai Simón",
         "teamId": "ESP",
-        "category": "Team Badge",
-        "rarity": "Foil",
+        "category": "Player",
+        "rarity": "Base",
         "birthDate": "N/A",
         "height": "N/A",
         "weight": "N/A",
         "currentClub": "N/A",
-        "isSpecial": true
+        "isSpecial": false
       },
       {
         "id": "ESP3",
@@ -5139,15 +5393,15 @@
       {
         "id": "FRA2",
         "number": "2",
-        "name": "Team Logo - France",
+        "name": "Mike Maignan",
         "teamId": "FRA",
-        "category": "Team Badge",
-        "rarity": "Foil",
+        "category": "Player",
+        "rarity": "Base",
         "birthDate": "N/A",
         "height": "N/A",
         "weight": "N/A",
         "currentClub": "N/A",
-        "isSpecial": true
+        "isSpecial": false
       },
       {
         "id": "FRA3",
@@ -5388,260 +5642,6 @@
     "secondaryColor": "#ED2939"
   },
   {
-    "id": "FWC",
-    "name": "FIFA World Cup 2026",
-    "flag": "🏳️",
-    "stickers": [
-      {
-        "id": "FWC1",
-        "number": "1",
-        "name": "Official Emblem",
-        "teamId": "FWC",
-        "category": "Brand / Emblem",
-        "rarity": "Foil",
-        "birthDate": "N/A",
-        "height": "N/A",
-        "weight": "N/A",
-        "currentClub": "N/A",
-        "isSpecial": true
-      },
-      {
-        "id": "FWC2",
-        "number": "2",
-        "name": "Official Emblem",
-        "teamId": "FWC",
-        "category": "Brand / Emblem",
-        "rarity": "Foil",
-        "birthDate": "N/A",
-        "height": "N/A",
-        "weight": "N/A",
-        "currentClub": "N/A",
-        "isSpecial": true
-      },
-      {
-        "id": "FWC3",
-        "number": "3",
-        "name": "Official Mascots",
-        "teamId": "FWC",
-        "category": "Host / Tournament",
-        "rarity": "Foil",
-        "birthDate": "N/A",
-        "height": "N/A",
-        "weight": "N/A",
-        "currentClub": "N/A",
-        "isSpecial": false
-      },
-      {
-        "id": "FWC4",
-        "number": "4",
-        "name": "Official Slogan",
-        "teamId": "FWC",
-        "category": "Host / Tournament",
-        "rarity": "Foil",
-        "birthDate": "N/A",
-        "height": "N/A",
-        "weight": "N/A",
-        "currentClub": "N/A",
-        "isSpecial": false
-      },
-      {
-        "id": "FWC5",
-        "number": "5",
-        "name": "Official Ball",
-        "teamId": "FWC",
-        "category": "Host / Tournament",
-        "rarity": "Foil",
-        "birthDate": "N/A",
-        "height": "N/A",
-        "weight": "N/A",
-        "currentClub": "N/A",
-        "isSpecial": false
-      },
-      {
-        "id": "FWC6",
-        "number": "6",
-        "name": "Canada - Host Countries & Cities",
-        "teamId": "FWC",
-        "category": "Host / Tournament",
-        "rarity": "Foil",
-        "birthDate": "N/A",
-        "height": "N/A",
-        "weight": "N/A",
-        "currentClub": "N/A",
-        "isSpecial": false
-      },
-      {
-        "id": "FWC7",
-        "number": "7",
-        "name": "Mexico - Host Countries & Cities",
-        "teamId": "FWC",
-        "category": "Host / Tournament",
-        "rarity": "Foil",
-        "birthDate": "N/A",
-        "height": "N/A",
-        "weight": "N/A",
-        "currentClub": "N/A",
-        "isSpecial": false
-      },
-      {
-        "id": "FWC8",
-        "number": "8",
-        "name": "USA - Host Countries & Cities",
-        "teamId": "FWC",
-        "category": "Host / Tournament",
-        "rarity": "Foil",
-        "birthDate": "N/A",
-        "height": "N/A",
-        "weight": "N/A",
-        "currentClub": "N/A",
-        "isSpecial": false
-      },
-      {
-        "id": "FWC9",
-        "number": "9",
-        "name": "Italy 1934 - FIFA Museum",
-        "teamId": "FWC",
-        "category": "FIFA Museum",
-        "rarity": "Foil",
-        "birthDate": "N/A",
-        "height": "N/A",
-        "weight": "N/A",
-        "currentClub": "N/A",
-        "isSpecial": false
-      },
-      {
-        "id": "FWC10",
-        "number": "10",
-        "name": "Uruguay 1950 - FIFA Museum",
-        "teamId": "FWC",
-        "category": "FIFA Museum",
-        "rarity": "Foil",
-        "birthDate": "N/A",
-        "height": "N/A",
-        "weight": "N/A",
-        "currentClub": "N/A",
-        "isSpecial": false
-      },
-      {
-        "id": "FWC11",
-        "number": "11",
-        "name": "West Germany 1954 - FIFA Museum",
-        "teamId": "FWC",
-        "category": "FIFA Museum",
-        "rarity": "Foil",
-        "birthDate": "N/A",
-        "height": "N/A",
-        "weight": "N/A",
-        "currentClub": "N/A",
-        "isSpecial": false
-      },
-      {
-        "id": "FWC12",
-        "number": "12",
-        "name": "Brazil 1962 - FIFA Museum",
-        "teamId": "FWC",
-        "category": "FIFA Museum",
-        "rarity": "Foil",
-        "birthDate": "N/A",
-        "height": "N/A",
-        "weight": "N/A",
-        "currentClub": "N/A",
-        "isSpecial": false
-      },
-      {
-        "id": "FWC13",
-        "number": "13",
-        "name": "West Germany 1974 - FIFA Museum",
-        "teamId": "FWC",
-        "category": "FIFA Museum",
-        "rarity": "Foil",
-        "birthDate": "N/A",
-        "height": "N/A",
-        "weight": "N/A",
-        "currentClub": "N/A",
-        "isSpecial": false
-      },
-      {
-        "id": "FWC14",
-        "number": "14",
-        "name": "Argentina 1986 - FIFA Museum",
-        "teamId": "FWC",
-        "category": "FIFA Museum",
-        "rarity": "Foil",
-        "birthDate": "N/A",
-        "height": "N/A",
-        "weight": "N/A",
-        "currentClub": "N/A",
-        "isSpecial": false
-      },
-      {
-        "id": "FWC15",
-        "number": "15",
-        "name": "Brazil 1994 - FIFA Museum",
-        "teamId": "FWC",
-        "category": "FIFA Museum",
-        "rarity": "Foil",
-        "birthDate": "N/A",
-        "height": "N/A",
-        "weight": "N/A",
-        "currentClub": "N/A",
-        "isSpecial": false
-      },
-      {
-        "id": "FWC16",
-        "number": "16",
-        "name": "Brazil 2002 - FIFA Museum",
-        "teamId": "FWC",
-        "category": "FIFA Museum",
-        "rarity": "Foil",
-        "birthDate": "N/A",
-        "height": "N/A",
-        "weight": "N/A",
-        "currentClub": "N/A",
-        "isSpecial": false
-      },
-      {
-        "id": "FWC17",
-        "number": "17",
-        "name": "Italy 2006 - FIFA Museum",
-        "teamId": "FWC",
-        "category": "FIFA Museum",
-        "rarity": "Foil",
-        "birthDate": "N/A",
-        "height": "N/A",
-        "weight": "N/A",
-        "currentClub": "N/A",
-        "isSpecial": false
-      },
-      {
-        "id": "FWC18",
-        "number": "18",
-        "name": "Germany 2014 - FIFA Museum",
-        "teamId": "FWC",
-        "category": "FIFA Museum",
-        "rarity": "Foil",
-        "birthDate": "N/A",
-        "height": "N/A",
-        "weight": "N/A",
-        "currentClub": "N/A",
-        "isSpecial": false
-      },
-      {
-        "id": "FWC19",
-        "number": "19",
-        "name": "Argentina 2022 - FIFA Museum",
-        "teamId": "FWC",
-        "category": "FIFA Museum",
-        "rarity": "Foil",
-        "birthDate": "N/A",
-        "height": "N/A",
-        "weight": "N/A",
-        "currentClub": "N/A",
-        "isSpecial": false
-      }
-    ]
-  },
-  {
     "id": "GER",
     "name": "Germany",
     "flag": "/src/assets/Flags/germanyx.jpg",
@@ -5662,15 +5662,15 @@
       {
         "id": "GER2",
         "number": "2",
-        "name": "Team Logo - Germany",
+        "name": "Marc-André ter Stegen",
         "teamId": "GER",
-        "category": "Team Badge",
-        "rarity": "Foil",
+        "category": "Player",
+        "rarity": "Base",
         "birthDate": "N/A",
         "height": "N/A",
         "weight": "N/A",
         "currentClub": "N/A",
-        "isSpecial": true
+        "isSpecial": false
       },
       {
         "id": "GER3",
@@ -5931,15 +5931,15 @@
       {
         "id": "GHA2",
         "number": "2",
-        "name": "Team Logo - Ghana",
+        "name": "Lawrence Ati-Zigi",
         "teamId": "GHA",
-        "category": "Team Badge",
-        "rarity": "Foil",
+        "category": "Player",
+        "rarity": "Base",
         "birthDate": "N/A",
         "height": "N/A",
         "weight": "N/A",
         "currentClub": "N/A",
-        "isSpecial": true
+        "isSpecial": false
       },
       {
         "id": "GHA3",
@@ -6467,15 +6467,15 @@
       {
         "id": "IRN2",
         "number": "2",
-        "name": "Team Logo - Iran",
+        "name": "Alireza Beiranvand",
         "teamId": "IRN",
-        "category": "Team Badge",
-        "rarity": "Foil",
+        "category": "Player",
+        "rarity": "Base",
         "birthDate": "N/A",
         "height": "N/A",
         "weight": "N/A",
         "currentClub": "N/A",
-        "isSpecial": true
+        "isSpecial": false
       },
       {
         "id": "IRN3",
@@ -7268,15 +7268,15 @@
       {
         "id": "JPN2",
         "number": "2",
-        "name": "Team Logo - Japan",
+        "name": "Zion Suzuki",
         "teamId": "JPN",
-        "category": "Team Badge",
-        "rarity": "Foil",
+        "category": "Player",
+        "rarity": "Base",
         "birthDate": "N/A",
         "height": "N/A",
         "weight": "N/A",
         "currentClub": "N/A",
-        "isSpecial": true
+        "isSpecial": false
       },
       {
         "id": "JPN3",
@@ -7537,15 +7537,15 @@
       {
         "id": "KOR2",
         "number": "2",
-        "name": "Team Logo - South Korea",
+        "name": "Jo Hyeon-woo",
         "teamId": "KOR",
-        "category": "Team Badge",
-        "rarity": "Foil",
+        "category": "Player",
+        "rarity": "Base",
         "birthDate": "N/A",
         "height": "N/A",
         "weight": "N/A",
         "currentClub": "N/A",
-        "isSpecial": true
+        "isSpecial": false
       },
       {
         "id": "KOR3",
@@ -8075,15 +8075,15 @@
       {
         "id": "MAR2",
         "number": "2",
-        "name": "Team Logo - Morocco",
+        "name": "Yassine Bounou",
         "teamId": "MAR",
-        "category": "Team Badge",
-        "rarity": "Foil",
+        "category": "Player",
+        "rarity": "Base",
         "birthDate": "N/A",
         "height": "N/A",
         "weight": "N/A",
         "currentClub": "N/A",
-        "isSpecial": true
+        "isSpecial": false
       },
       {
         "id": "MAR3",
@@ -8344,15 +8344,15 @@
       {
         "id": "MEX2",
         "number": "2",
-        "name": "Team Logo - Mexico",
+        "name": "Guillermo Ochoa",
         "teamId": "MEX",
-        "category": "Team Badge",
-        "rarity": "Foil",
+        "category": "Player",
+        "rarity": "Base",
         "birthDate": "N/A",
         "height": "N/A",
         "weight": "N/A",
         "currentClub": "N/A",
-        "isSpecial": true
+        "isSpecial": false
       },
       {
         "id": "MEX3",
@@ -8613,15 +8613,15 @@
       {
         "id": "NED2",
         "number": "2",
-        "name": "Team Logo - Netherlands",
+        "name": "Bart Verbruggen",
         "teamId": "NED",
-        "category": "Team Badge",
-        "rarity": "Foil",
+        "category": "Player",
+        "rarity": "Base",
         "birthDate": "N/A",
         "height": "N/A",
         "weight": "N/A",
         "currentClub": "N/A",
-        "isSpecial": true
+        "isSpecial": false
       },
       {
         "id": "NED3",
@@ -8882,15 +8882,15 @@
       {
         "id": "NOR2",
         "number": "2",
-        "name": "Team Logo - Norway",
+        "name": "Ørjan Nyland",
         "teamId": "NOR",
-        "category": "Team Badge",
-        "rarity": "Foil",
+        "category": "Player",
+        "rarity": "Base",
         "birthDate": "N/A",
         "height": "N/A",
         "weight": "N/A",
         "currentClub": "N/A",
-        "isSpecial": true
+        "isSpecial": false
       },
       {
         "id": "NOR3",
@@ -9685,15 +9685,15 @@
       {
         "id": "PAR2",
         "number": "2",
-        "name": "Team Logo - Paraguay",
+        "name": "Carlos Coronel",
         "teamId": "PAR",
-        "category": "Team Badge",
-        "rarity": "Foil",
+        "category": "Player",
+        "rarity": "Base",
         "birthDate": "N/A",
         "height": "N/A",
         "weight": "N/A",
         "currentClub": "N/A",
-        "isSpecial": true
+        "isSpecial": false
       },
       {
         "id": "PAR3",
@@ -9954,15 +9954,15 @@
       {
         "id": "POR2",
         "number": "2",
-        "name": "Team Logo - Portugal",
+        "name": "Diogo Costa",
         "teamId": "POR",
-        "category": "Team Badge",
-        "rarity": "Foil",
+        "category": "Player",
+        "rarity": "Base",
         "birthDate": "N/A",
         "height": "N/A",
         "weight": "N/A",
         "currentClub": "N/A",
-        "isSpecial": true
+        "isSpecial": false
       },
       {
         "id": "POR3",
@@ -10759,15 +10759,15 @@
       {
         "id": "SCO2",
         "number": "2",
-        "name": "Team Logo - Scotland",
+        "name": "Angus Gunn",
         "teamId": "SCO",
-        "category": "Team Badge",
-        "rarity": "Foil",
+        "category": "Player",
+        "rarity": "Base",
         "birthDate": "N/A",
         "height": "N/A",
         "weight": "N/A",
         "currentClub": "N/A",
-        "isSpecial": true
+        "isSpecial": false
       },
       {
         "id": "SCO3",
@@ -11028,15 +11028,15 @@
       {
         "id": "SEN2",
         "number": "2",
-        "name": "Team Logo - Senegal",
+        "name": "Édouard Mendy",
         "teamId": "SEN",
-        "category": "Team Badge",
-        "rarity": "Foil",
+        "category": "Player",
+        "rarity": "Base",
         "birthDate": "N/A",
         "height": "N/A",
         "weight": "N/A",
         "currentClub": "N/A",
-        "isSpecial": true
+        "isSpecial": false
       },
       {
         "id": "SEN3",
@@ -11297,15 +11297,15 @@
       {
         "id": "SUI2",
         "number": "2",
-        "name": "Team Logo - Switzerland",
+        "name": "Yann Sommer",
         "teamId": "SUI",
-        "category": "Team Badge",
-        "rarity": "Foil",
+        "category": "Player",
+        "rarity": "Base",
         "birthDate": "N/A",
         "height": "N/A",
         "weight": "N/A",
         "currentClub": "N/A",
-        "isSpecial": true
+        "isSpecial": false
       },
       {
         "id": "SUI3",
@@ -11835,15 +11835,15 @@
       {
         "id": "TUN2",
         "number": "2",
-        "name": "Team Logo - Tunisia",
+        "name": "Bechir Ben Said",
         "teamId": "TUN",
-        "category": "Team Badge",
-        "rarity": "Foil",
+        "category": "Player",
+        "rarity": "Base",
         "birthDate": "N/A",
         "height": "N/A",
         "weight": "N/A",
         "currentClub": "N/A",
-        "isSpecial": true
+        "isSpecial": false
       },
       {
         "id": "TUN3",
@@ -12369,15 +12369,15 @@
       {
         "id": "URU2",
         "number": "2",
-        "name": "Team Logo - Uruguay",
+        "name": "Sergio Rochet",
         "teamId": "URU",
-        "category": "Team Badge",
-        "rarity": "Foil",
+        "category": "Player",
+        "rarity": "Base",
         "birthDate": "N/A",
         "height": "N/A",
         "weight": "N/A",
         "currentClub": "N/A",
-        "isSpecial": true
+        "isSpecial": false
       },
       {
         "id": "URU3",
@@ -12638,15 +12638,15 @@
       {
         "id": "USA2",
         "number": "2",
-        "name": "Team Logo - United States",
+        "name": "Matt Turner",
         "teamId": "USA",
-        "category": "Team Badge",
-        "rarity": "Foil",
+        "category": "Player",
+        "rarity": "Base",
         "birthDate": "N/A",
         "height": "N/A",
         "weight": "N/A",
         "currentClub": "N/A",
-        "isSpecial": true
+        "isSpecial": false
       },
       {
         "id": "USA3",
