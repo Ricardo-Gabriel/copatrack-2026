@@ -17,34 +17,42 @@ export function SummaryTable({ collection, teamsMetadata }: SummaryTableProps) {
   const downloadPDF = async () => {
     if (!tableRef.current) return;
     
-    const originalStyle = tableRef.current.style.width;
-    tableRef.current.style.width = '1400px'; // Forçar largura fixa para garantir colunas
-    
     try {
-      const canvas = await html2canvas(tableRef.current, {
-        scale: 2,
+      const element = tableRef.current;
+      
+      // Capturar as dimensões reais do conteúdo, não apenas do que é visível
+      const canvas = await html2canvas(element, {
+        scale: 2, // Alta qualidade
         backgroundColor: '#020617',
-        logging: false,
         useCORS: true,
         allowTaint: true,
-        windowWidth: 1400,
-        height: tableRef.current.scrollHeight // Capturar toda a altura
+        // Garantir que capture a largura total do conteúdo (1400px que definimos no div)
+        width: element.scrollWidth,
+        height: element.scrollHeight,
+        windowWidth: element.scrollWidth,
+        windowHeight: element.scrollHeight,
+        x: 0,
+        y: 0
       });
       
       const imgData = canvas.toDataURL('image/png');
+      
+      // O jsPDF trabalha com pontos, vamos converter pixels para pontos mantendo a proporção
+      // Usamos as dimensões originais (divididas pelo scale do canvas)
+      const pdfWidth = canvas.width / 2;
+      const pdfHeight = canvas.height / 2;
+
       const pdf = new jsPDF({
-        orientation: 'landscape',
+        orientation: pdfWidth > pdfHeight ? 'landscape' : 'portrait',
         unit: 'px',
-        format: [canvas.width / 2, canvas.height / 2] // Ajustar PDF ao tamanho real da tabela
+        format: [pdfWidth, pdfHeight]
       });
       
-      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width / 2, canvas.height / 2);
-      pdf.save('copatrack-resumo-completo.pdf');
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save('copatrack-resumo-total.pdf');
     } catch (err) {
       console.error('Erro ao gerar PDF:', err);
-      alert('Houve um erro ao gerar o PDF.');
-    } finally {
-      tableRef.current.style.width = originalStyle;
+      alert('Houve um erro ao gerar o PDF completo.');
     }
   };
 
