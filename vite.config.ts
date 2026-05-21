@@ -1,14 +1,12 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import { viteSingleFile } from 'vite-plugin-singlefile'
 
+// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
-    react(),
-    viteSingleFile(),
-  ],
+  plugins: [react()],
+  base: '/copatrack-2026/',
   build: {
-    assetsInlineLimit: 100000000, // 100MB - Garante que todas as imagens sejam embutidas no HTML
-    chunkSizeWarningLimit: 100000000,
+    outDir: 'dist',
+    sourcemap: false,
   },
 })
