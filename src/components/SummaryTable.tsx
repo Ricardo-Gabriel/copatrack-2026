@@ -139,7 +139,7 @@ export function SummaryTable({ collection, teamsMetadata }: SummaryTableProps) {
                               color: '#1e293b'
                             }}
                           >
-                            {sticker.number}
+                            {sticker.id}
                           </div>
                         </td>
                       );
