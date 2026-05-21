@@ -49,11 +49,11 @@ export function SummaryTable({ collection, teamsMetadata }: SummaryTableProps) {
           if (!sticker) {
             row.push('');
           } else {
-            const qty = collection[sticker.id] || 0;
-            row.push(isFinite(qty) && qty > 0 ? sticker.id : '-');
+            // Sempre adiciona o ID, independente de ter a figurinha ou não
+            row.push(sticker.id);
           }
         }
-        return { data: row, meta };
+        return { data: row, meta, stickers: team.stickers };
       });
 
       autoTable(pdf, {
@@ -66,7 +66,7 @@ export function SummaryTable({ collection, teamsMetadata }: SummaryTableProps) {
           valign: 'middle',
           halign: 'center',
           fillColor: [15, 23, 42], // Slate 900
-          textColor: [71, 85, 105], // Slate 600
+          textColor: [255, 255, 255], // Branco para figurinhas que NÃO temos
           lineColor: [30, 41, 59], // Slate 800
           lineWidth: 0.1,
         },
@@ -80,17 +80,25 @@ export function SummaryTable({ collection, teamsMetadata }: SummaryTableProps) {
           0: { halign: 'left', fontStyle: 'bold', fontSize: 7, textColor: [255, 255, 255] }
         },
         didParseCell: (data) => {
-          // Pular a primeira coluna (nome do país)
           if (data.section === 'body' && data.column.index !== 0) {
             const teamIndex = data.row.index;
-            const stickerValue = data.cell.text[0];
-            const meta = tableData[teamIndex].meta;
+            const stickerIndex = data.column.index - 1; // Ajuste por causa da coluna 'País'
+            const sticker = tableData[teamIndex].stickers[stickerIndex];
+            
+            if (sticker) {
+              const qty = collection[sticker.id] || 0;
+              const meta = tableData[teamIndex].meta;
 
-            if (stickerValue !== '-') {
-              // Se tem a figurinha, aplicar cores da seleção
-              data.cell.styles.fillColor = meta.primaryColor || '#1E40AF';
-              data.cell.styles.textColor = meta.secondaryColor || '#FFFFFF';
-              data.cell.styles.fontStyle = 'bold';
+              if (qty > 0) {
+                // Se tem a figurinha, aplicar cores da seleção
+                data.cell.styles.fillColor = meta.primaryColor || '#1E40AF';
+                data.cell.styles.textColor = meta.secondaryColor || '#FFFFFF';
+                data.cell.styles.fontStyle = 'bold';
+              } else {
+                // Se NÃO tem, manter fundo escuro e texto esmaecido ou branco
+                data.cell.styles.fillColor = [15, 23, 42];
+                data.cell.styles.textColor = [100, 116, 139]; // Slate 500 para contraste discreto
+              }
             }
           }
         },
