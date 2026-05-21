@@ -17,28 +17,34 @@ export function SummaryTable({ collection, teamsMetadata }: SummaryTableProps) {
   const downloadPDF = async () => {
     if (!tableRef.current) return;
     
+    const originalStyle = tableRef.current.style.width;
+    tableRef.current.style.width = '1400px'; // Forçar largura fixa para garantir colunas
+    
     try {
-      // Forçar cores padrão antes da captura para evitar erro de oklch do Tailwind 4
       const canvas = await html2canvas(tableRef.current, {
         scale: 2,
-        backgroundColor: '#020617', // Slate 950 hex
+        backgroundColor: '#020617',
         logging: false,
         useCORS: true,
-        allowTaint: true
+        allowTaint: true,
+        windowWidth: 1400,
+        height: tableRef.current.scrollHeight // Capturar toda a altura
       });
       
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF({
         orientation: 'landscape',
         unit: 'px',
-        format: [canvas.width, canvas.height]
+        format: [canvas.width / 2, canvas.height / 2] // Ajustar PDF ao tamanho real da tabela
       });
       
-      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
-      pdf.save('copatrack-resumo.pdf');
+      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width / 2, canvas.height / 2);
+      pdf.save('copatrack-resumo-completo.pdf');
     } catch (err) {
       console.error('Erro ao gerar PDF:', err);
-      alert('Houve um erro ao gerar o PDF. Tente novamente em um navegador moderno.');
+      alert('Houve um erro ao gerar o PDF.');
+    } finally {
+      tableRef.current.style.width = originalStyle;
     }
   };
 
@@ -50,34 +56,40 @@ export function SummaryTable({ collection, teamsMetadata }: SummaryTableProps) {
         </h2>
         <button 
           onClick={downloadPDF}
-          className="bg-cup-green hover:bg-green-600 text-white px-4 py-2 rounded-xl font-bold text-xs flex items-center gap-2 transition-all"
+          className="bg-cup-green hover:bg-green-600 text-white px-4 py-2 rounded-xl font-bold text-xs flex items-center gap-2 transition-all shadow-lg shadow-green-900/20"
         >
-          <Download size={14} /> BAIXAR PDF
+          <Download size={14} /> BAIXAR PDF COMPLETO
         </button>
       </div>
 
-      <div className="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900/50">
-        <div ref={tableRef} className="min-w-[1200px] p-8 bg-[#020617]">
-          <div className="mb-8 flex items-center gap-4">
-            <div className="w-12 h-12 bg-[#059669] rounded-xl flex items-center justify-center">
-              <TableIcon className="text-white" size={24} />
+      <div className="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900/50 custom-scrollbar">
+        <div ref={tableRef} className="w-[1400px] p-8 bg-[#020617]">
+          <div className="mb-8 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-[#059669] rounded-xl flex items-center justify-center">
+                <TableIcon className="text-white" size={24} />
+              </div>
+              <div>
+                <h1 className="text-2xl font-black text-white italic tracking-tighter">COPATRACK 2026</h1>
+                <p className="text-[10px] text-[#64748b] font-bold uppercase tracking-widest">Relatório Completo de Inventário • {TEAMS_DATA.length} Seleções</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-2xl font-black text-white italic">COPATRACK 2026</h1>
-              <p className="text-xs text-[#64748b] font-bold uppercase tracking-widest">Relatório Geral de Inventário</p>
+            <div className="text-right">
+               <div className="text-2xl font-black text-white">{Object.keys(collection).length} <span className="text-xs text-[#64748b]">/ {TEAMS_DATA.reduce((acc, t) => acc + t.stickers.length, 0)}</span></div>
+               <div className="text-[9px] text-[#059669] font-black uppercase tracking-tighter">Figurinhas Obtidas</div>
             </div>
           </div>
 
           <table className="w-full border-collapse">
             <thead>
-              <tr className="text-[10px] text-[#64748b] uppercase tracking-widest border-b border-[#1e293b]">
-                <th className="py-4 text-left font-black w-20">Seleção</th>
+              <tr className="text-[9px] text-[#475569] uppercase tracking-widest border-b border-[#1e293b]">
+                <th className="py-3 text-left font-black w-24">Seleção</th>
                 {Array.from({ length: 20 }).map((_, i) => (
-                  <th key={i} className="py-4 text-center font-black">{i + 1}</th>
+                  <th key={i} className="py-3 text-center font-black w-12">{i + 1}</th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#1e293b]">
+            <tbody className="divide-y divide-[#1e293b]/50">
               {TEAMS_DATA.map(team => {
                 const meta = teamsMetadata[team.id] || { 
                   name: team.name, 
@@ -87,39 +99,39 @@ export function SummaryTable({ collection, teamsMetadata }: SummaryTableProps) {
                 };
                 
                 return (
-                  <tr key={team.id} className="hover:bg-[#0f172a] transition-colors">
-                    <td className="py-3">
-                      <div className="flex flex-col items-center gap-1">
+                  <tr key={team.id} className="hover:bg-[#0f172a]/50 transition-colors">
+                    <td className="py-2">
+                      <div className="flex items-center gap-2">
                         {meta.flag.startsWith('/src/assets/Flags/') || meta.flag.endsWith('.jpg') ? (
-                          <img src={FLAG_IMAGES[meta.flag] || meta.flag} alt={meta.name} className="w-8 h-6 object-cover rounded shadow-sm" />
+                          <img src={FLAG_IMAGES[meta.flag] || meta.flag} alt={meta.name} className="w-6 h-4 object-cover rounded-[2px] shadow-sm" />
                         ) : (
-                          <span className="text-lg">{meta.flag}</span>
+                          <span className="text-sm">{meta.flag}</span>
                         )}
-                        <span className="text-[8px] font-black text-[#64748b]">{team.id}</span>
+                        <span className="text-[10px] font-black text-slate-400">{team.id}</span>
                       </div>
                     </td>
                     {Array.from({ length: 20 }).map((_, i) => {
                       const sticker = team.stickers[i];
-                      if (!sticker) return <td key={i} className="py-2"></td>;
+                      if (!sticker) return <td key={i} className="py-1"></td>;
                       
                       const qty = collection[sticker.id] || 0;
                       const isOwned = qty > 0;
                       
                       return (
-                        <td key={i} className="py-2 px-1 text-center">
+                        <td key={i} className="py-1 px-0.5 text-center">
                           <div 
-                            className={`text-[8px] font-black py-2 rounded-lg border transition-all`}
+                            className={`text-[8px] font-black py-1.5 rounded-[4px] border transition-all`}
                             style={isOwned ? {
-                              backgroundColor: `${meta.primaryColor}33`,
+                              backgroundColor: `${meta.primaryColor}40`,
                               borderColor: meta.primaryColor,
                               color: meta.secondaryColor
                             } : {
                               backgroundColor: '#0f172a',
                               borderColor: '#1e293b',
-                              color: '#334155'
+                              color: '#1e293b'
                             }}
                           >
-                            {sticker.id}
+                            {sticker.number}
                           </div>
                         </td>
                       );
