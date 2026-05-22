@@ -28,7 +28,10 @@ function cn(...inputs: ClassValue[]) {
 type ViewMode = 'all' | 'missing' | 'duplicates' | 'history' | 'summary' | 'friend' | 'social';
 
 function App() {
-  const { collection, history, teamsMetadata, user, updateSticker, executeTrade, updateTeamMetadata } = useCollection();
+  const { 
+    collection, history, teamsMetadata, user, updateSticker, 
+    executeTrade, updateTeamMetadata, updateRemoteCollection 
+  } = useCollection();
   const { 
     friends, pendingRequests, sentRequests, receivedProposals, searchUser, sendFriendRequest, 
     acceptFriendRequest, declineFriendRequest, removeFriend,
@@ -55,6 +58,37 @@ function App() {
       setViewMode('friend');
     } else {
       alert('Não foi possível carregar o álbum deste amigo. Verifique se ele também está logado e sincronizou o álbum pelo menos uma vez!');
+    }
+  };
+
+  const onHandleProposal = async (proposalId: string, action: 'accepted' | 'declined') => {
+    try {
+      if (action === 'accepted') {
+        const proposal = receivedProposals.find(p => p.id === proposalId);
+        if (!proposal) return;
+
+        // 1. Atualizar meu álbum local e remoto
+        executeTrade({
+          stickersOut: proposal.stickers_requested, // O que ele pediu de mim
+          stickersIn: proposal.stickers_offered,     // O que ele me ofereceu
+          partnerName: proposal.sender_profile?.username || 'Amigo'
+        });
+
+        // 2. Atualizar o álbum do amigo no servidor
+        await updateRemoteCollection(
+          proposal.sender_id,
+          proposal.stickers_requested, // Ele recebe o que me pediu
+          proposal.stickers_offered     // Ele perde o que me ofereceu
+        );
+      }
+
+      // 3. Atualizar o status da proposta no Supabase
+      await handleProposalAction(proposalId, action);
+      alert(action === 'accepted' ? 'Troca realizada com sucesso!' : 'Proposta recusada.');
+      setIsProposalsModalOpen(false);
+    } catch (e) {
+      console.error("Erro ao processar troca:", e);
+      alert('Erro técnico ao realizar a troca. Verifique sua conexão.');
     }
   };
 
@@ -450,7 +484,7 @@ function App() {
         isOpen={isProposalsModalOpen}
         onClose={() => setIsProposalsModalOpen(false)}
         proposals={receivedProposals}
-        onAction={handleProposalAction}
+        onAction={onHandleProposal}
       />
 
       {viewingFriend && friendState && (

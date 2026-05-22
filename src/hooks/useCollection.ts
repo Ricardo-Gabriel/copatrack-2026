@@ -206,6 +206,59 @@ export function useCollection() {
     });
   };
 
+  const updateRemoteCollection = async (friendId: string, stickersIn: string[], stickersOut: string[]) => {
+    // 1. Buscar o estado atual do amigo
+    const { data, error: fetchError } = await supabase
+      .from('user_data')
+      .select('state')
+      .eq('id', friendId)
+      .single();
+
+    if (fetchError) throw fetchError;
+
+    const friendState = data.state as AppState;
+    const newCollection = { ...friendState.collection };
+
+    // 2. Aplicar as mudanças
+    stickersIn.forEach(id => {
+      newCollection[id] = (newCollection[id] || 0) + 1;
+    });
+
+    stickersOut.forEach(id => {
+      const current = newCollection[id] || 0;
+      if (current > 0) {
+        const next = current - 1;
+        if (next === 0) delete newCollection[id];
+        else newCollection[id] = next;
+      }
+    });
+
+    // 3. Persistir no Supabase
+    const { error: updateError } = await supabase
+      .from('user_data')
+      .update({
+        state: {
+          ...friendState,
+          collection: newCollection,
+          history: [
+            {
+              id: crypto.randomUUID(),
+              timestamp: Date.now(),
+              stickerId: 'TRADE',
+              type: 'trade-in',
+              quantity: stickersIn.length + stickersOut.length,
+              details: `Troca realizada com sucesso!`
+            },
+            ...friendState.history
+          ].slice(0, 100)
+        },
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', friendId);
+
+    if (updateError) throw updateError;
+  };
+
   return { 
     collection: state.collection, 
     history: state.history, 
@@ -214,6 +267,7 @@ export function useCollection() {
     loading,
     updateSticker,
     executeTrade,
-    updateTeamMetadata
+    updateTeamMetadata,
+    updateRemoteCollection
   };
 }
