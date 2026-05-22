@@ -57,7 +57,7 @@ export function useSocial(userId: string | undefined) {
       const isSender = f.sender_id === userId;
       const friendProfile = isSender ? f.receiver : f.sender;
       return { ...f, friend_profile: friendProfile };
-    });
+    }).filter(f => f.friend_profile !== null);
 
     setFriends(formattedFriends.filter(f => f.status === 'accepted'));
     setPendingRequests(formattedFriends.filter(f => f.status === 'pending' && f.receiver_id === userId));
@@ -111,6 +111,7 @@ export function useSocial(userId: string | undefined) {
       .eq('id', requestId);
     
     if (error) throw error;
+    await fetchFriends();
   };
 
   const declineFriendRequest = async (requestId: string) => {
@@ -120,6 +121,7 @@ export function useSocial(userId: string | undefined) {
       .eq('id', requestId);
     
     if (error) throw error;
+    await fetchFriends();
   };
 
   const removeFriend = async (friendshipId: string) => {
@@ -128,7 +130,11 @@ export function useSocial(userId: string | undefined) {
       .delete()
       .eq('id', friendshipId);
     
-    if (error) throw error;
+    if (error) {
+      console.error("Erro ao remover amigo:", error);
+      throw error;
+    }
+    await fetchFriends();
   };
 
   const getFriendCollection = async (friendId: string) => {

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, Search, UserPlus, Check, User, Loader2, ArrowRight, Trash2, Share2, Copy, CheckCircle2, Bell } from 'lucide-react';
+import { X, Search, UserPlus, Check, User, Loader2, ArrowRight, Trash2, Share2, Copy, CheckCircle2, Bell, RefreshCw } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import type { Profile, Friendship } from '../types';
@@ -20,21 +20,30 @@ interface FriendsModalProps {
   onDeclineRequest: (id: string) => Promise<void>;
   onRemoveFriend: (id: string) => Promise<void>;
   onViewFriendCollection: (friend: Profile) => void;
+  onRefresh?: () => void;
   isInline?: boolean;
 }
 
 export function FriendsModal({ 
   isOpen, onClose, friends, pendingRequests, sentRequests,
   onSearch, onSendRequest, onAcceptRequest, onDeclineRequest, onRemoveFriend, onViewFriendCollection,
-  isInline = false
+  onRefresh, isInline = false
 }: FriendsModalProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<Profile[]>([]);
   const [searching, setSearching] = useState(false);
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   if (!isOpen && !isInline) return null;
+
+  const handleRefresh = async () => {
+    if (!onRefresh) return;
+    setRefreshing(true);
+    await onRefresh();
+    setTimeout(() => setRefreshing(false), 1000);
+  };
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -112,9 +121,20 @@ export function FriendsModal({
       isInline ? "" : "max-w-md max-h-[90vh]"
     )}>
       <div className="p-6 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
-        <h2 className="text-xl font-black uppercase italic tracking-tighter flex items-center gap-2 text-white">
-          <User className="text-cup-green" /> Amigos
-        </h2>
+        <div className="flex items-center gap-4">
+          <h2 className="text-xl font-black uppercase italic tracking-tighter flex items-center gap-2 text-white">
+            <User className="text-cup-green" /> Amigos
+          </h2>
+          {onRefresh && (
+            <button 
+              onClick={handleRefresh}
+              className={cn("p-1.5 hover:bg-slate-800 rounded-lg transition-all text-slate-500 hover:text-cup-green", refreshing && "animate-spin text-cup-green")}
+              title="Atualizar"
+            >
+              <RefreshCw size={16} />
+            </button>
+          )}
+        </div>
         {!isInline && (
           <button onClick={onClose} className="p-2 hover:bg-slate-800 rounded-full transition-colors text-slate-400">
             <X size={20} />

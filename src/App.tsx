@@ -32,7 +32,7 @@ function App() {
   const { 
     friends, pendingRequests, sentRequests, receivedProposals, searchUser, sendFriendRequest, 
     acceptFriendRequest, declineFriendRequest, removeFriend,
-    getFriendCollection, sendTradeProposal, handleProposalAction 
+    getFriendCollection, sendTradeProposal, handleProposalAction, fetchFriends 
   } = useSocial(user?.id);
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -54,7 +54,7 @@ function App() {
       setFriendState(state);
       setViewMode('friend');
     } else {
-      alert('Não foi possível carregar o álbum deste amigo.');
+      alert('Não foi possível carregar o álbum deste amigo. Verifique se ele também está logado e sincronizou o álbum pelo menos uma vez!');
     }
   };
 
@@ -69,13 +69,14 @@ function App() {
   };
 
   const stats = useMemo(() => {
+    const activeCollection = viewMode === 'friend' && friendState ? friendState.collection : collection;
     const totalStickers = TEAMS_DATA.reduce((acc, team) => acc + team.stickers.length, 0);
-    const ownedUnique = Object.keys(collection).length;
-    const totalRepeated = Object.values(collection).reduce((acc, qty) => acc + (qty > 1 ? qty - 1 : 0), 0);
+    const ownedUnique = Object.keys(activeCollection).length;
+    const totalRepeated = Object.values(activeCollection).reduce((acc, qty) => acc + (qty > 1 ? qty - 1 : 0), 0);
     const percentage = ((ownedUnique / totalStickers) * 100).toFixed(1);
 
     return { totalStickers, ownedUnique, totalRepeated, percentage };
-  }, [collection]);
+  }, [collection, viewMode, friendState]);
 
   const handleShare = async () => {
     const text = `Meu progresso no CopaTrack 2026: ${stats.percentage}% completo (${stats.ownedUnique}/${stats.totalStickers})! 🏆⚽`;
@@ -226,7 +227,7 @@ function App() {
                 <ArrowRightLeft size={14} /> PROPOR TROCA
               </button>
               <button 
-                onClick={() => { setViewMode('all'); setViewingFriend(null); setFriendState(null); }}
+                onClick={() => { setViewMode('social'); setViewingFriend(null); setFriendState(null); }}
                 className="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs font-bold transition-colors"
               >
                 VOLTAR
@@ -337,6 +338,7 @@ function App() {
               onDeclineRequest={declineFriendRequest}
               onRemoveFriend={removeFriend}
               onViewFriendCollection={handleViewFriend}
+              onRefresh={fetchFriends}
               isInline={true}
             />
           </div>
