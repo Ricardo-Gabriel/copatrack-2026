@@ -5,6 +5,7 @@ import type { Profile, Friendship, TradeProposal, AppState } from '../types';
 export function useSocial(userId: string | undefined) {
   const [friends, setFriends] = useState<Friendship[]>([]);
   const [pendingRequests, setPendingRequests] = useState<Friendship[]>([]);
+  const [sentRequests, setSentRequests] = useState<Friendship[]>([]);
   const [receivedProposals, setReceivedProposals] = useState<TradeProposal[]>([]);
 
   useEffect(() => {
@@ -60,6 +61,7 @@ export function useSocial(userId: string | undefined) {
 
     setFriends(formattedFriends.filter(f => f.status === 'accepted'));
     setPendingRequests(formattedFriends.filter(f => f.status === 'pending' && f.receiver_id === userId));
+    setSentRequests(formattedFriends.filter(f => f.status === 'pending' && f.sender_id === userId));
   };
 
   const fetchProposals = async () => {
@@ -111,6 +113,24 @@ export function useSocial(userId: string | undefined) {
     if (error) throw error;
   };
 
+  const declineFriendRequest = async (requestId: string) => {
+    const { error } = await supabase
+      .from('friendships')
+      .delete()
+      .eq('id', requestId);
+    
+    if (error) throw error;
+  };
+
+  const removeFriend = async (friendshipId: string) => {
+    const { error } = await supabase
+      .from('friendships')
+      .delete()
+      .eq('id', friendshipId);
+    
+    if (error) throw error;
+  };
+
   const getFriendCollection = async (friendId: string) => {
     const { data, error } = await supabase
       .from('user_data')
@@ -145,10 +165,13 @@ export function useSocial(userId: string | undefined) {
   return {
     friends,
     pendingRequests,
+    sentRequests,
     receivedProposals,
     searchUser,
     sendFriendRequest,
     acceptFriendRequest,
+    declineFriendRequest,
+    removeFriend,
     getFriendCollection,
     sendTradeProposal,
     handleProposalAction,

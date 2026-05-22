@@ -30,8 +30,9 @@ type ViewMode = 'all' | 'missing' | 'duplicates' | 'history' | 'summary' | 'frie
 function App() {
   const { collection, history, teamsMetadata, user, updateSticker, executeTrade, updateTeamMetadata } = useCollection();
   const { 
-    friends, pendingRequests, receivedProposals, searchUser, sendFriendRequest, 
-    acceptFriendRequest, getFriendCollection, sendTradeProposal, handleProposalAction 
+    friends, pendingRequests, sentRequests, receivedProposals, searchUser, sendFriendRequest, 
+    acceptFriendRequest, declineFriendRequest, removeFriend,
+    getFriendCollection, sendTradeProposal, handleProposalAction 
   } = useSocial(user?.id);
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -402,9 +403,12 @@ function App() {
         onClose={() => setIsFriendsModalOpen(false)}
         friends={friends}
         pendingRequests={pendingRequests}
+        sentRequests={sentRequests}
         onSearch={searchUser}
         onSendRequest={sendFriendRequest}
         onAcceptRequest={acceptFriendRequest}
+        onDeclineRequest={declineFriendRequest}
+        onRemoveFriend={removeFriend}
         onViewFriendCollection={handleViewFriend}
       />
 
