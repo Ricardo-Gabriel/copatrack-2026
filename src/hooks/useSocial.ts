@@ -102,6 +102,7 @@ export function useSocial(userId: string | undefined) {
       .insert({ sender_id: userId, receiver_id: friendId, status: 'pending' });
     
     if (error) throw error;
+    await fetchFriends();
   };
 
   const acceptFriendRequest = async (requestId: string) => {
@@ -161,6 +162,7 @@ export function useSocial(userId: string | undefined) {
       .insert(proposal);
     
     if (error) throw error;
+    await fetchProposals();
   };
 
   const handleProposalAction = async (proposalId: string, action: 'accepted' | 'declined' | 'cancelled') => {
@@ -170,6 +172,7 @@ export function useSocial(userId: string | undefined) {
       .eq('id', proposalId);
     
     if (error) throw error;
+    await fetchProposals();
 
     // Se aceitou, a lógica de troca real precisa ser executada (removendo de um e adicionando no outro)
     // No mundo ideal isso seria um RPC, mas vamos simular por enquanto ou avisar o usuário
