@@ -159,4 +159,3 @@ export function TradeProposalModal({
     </div>
   );
 }
-}
