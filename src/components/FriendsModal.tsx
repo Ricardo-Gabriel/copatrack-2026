@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, Search, UserPlus, Check, User, Loader2, ArrowRight, UserMinus, Trash2, Share2, Copy, CheckCircle2, Bell } from 'lucide-react';
+import { X, Search, UserPlus, Check, User, Loader2, ArrowRight, Trash2, Share2, Copy, CheckCircle2, Bell } from 'lucide-react';
 import type { Profile, Friendship } from '../types';
 
 interface FriendsModalProps {
