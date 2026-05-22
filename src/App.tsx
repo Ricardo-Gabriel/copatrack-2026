@@ -14,7 +14,7 @@ import { supabase } from './lib/supabase';
 import { 
   Trophy, Search, Share2, LayoutGrid, Copy, Ban, 
   History as HistoryIcon, X, ArrowRightLeft, Palette, 
-  User as UserIcon, LogOut, Table as TableIcon, Users, Bell
+  User as UserIcon, LogOut, Table as TableIcon, Users, Bell, Trash2
 } from 'lucide-react';
 import { useState, useMemo } from 'react';
 import { clsx, type ClassValue } from 'clsx';
@@ -32,6 +32,26 @@ function App() {
     collection, history, teamsMetadata, user, updateSticker, 
     executeTrade, updateTeamMetadata, updateRemoteCollection 
   } = useCollection();
+
+  const handleDeleteAccount = async () => {
+    const confirmed = confirm("TEM CERTEZA? Isso excluirá permanentemente seu álbum, amizades e conta. Esta ação não pode ser desfeita.");
+    if (!confirmed) return;
+    
+    const doubleConfirmed = confirm("ÚLTIMO AVISO: Todos os seus dados serão apagados para sempre. Deseja continuar?");
+    if (!doubleConfirmed) return;
+
+    try {
+      const { error } = await supabase.rpc('delete_user_account');
+      if (error) throw error;
+      await supabase.auth.signOut();
+      alert("Conta excluída com sucesso.");
+      window.location.reload();
+    } catch (e) {
+      console.error("Erro ao excluir conta:", e);
+      alert("Erro ao excluir conta. Verifique sua conexão.");
+    }
+  };
+
   const { 
     friends, pendingRequests, sentRequests, receivedProposals, searchUser, sendFriendRequest, 
     acceptFriendRequest, declineFriendRequest, removeFriend,
@@ -193,13 +213,22 @@ function App() {
                 </button>
               )}
               {user ? (
-                <button 
-                  onClick={() => supabase.auth.signOut()}
-                  className="p-2 bg-slate-800 rounded-full text-red-400 hover:text-red-300"
-                  title="Sair"
-                >
-                  <LogOut size={18} />
-                </button>
+                <div className="flex items-center gap-1">
+                  <button 
+                    onClick={handleDeleteAccount}
+                    className="p-2 bg-slate-800 rounded-full text-slate-500 hover:text-red-500"
+                    title="Excluir Conta"
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                  <button 
+                    onClick={() => supabase.auth.signOut()}
+                    className="p-2 bg-slate-800 rounded-full text-red-400 hover:text-red-300"
+                    title="Sair"
+                  >
+                    <LogOut size={18} />
+                  </button>
+                </div>
               ) : (
                 <button 
                   onClick={() => setIsAuthModalOpen(true)}
@@ -249,12 +278,22 @@ function App() {
               {user ? (
                 <div className="flex items-center gap-3 bg-slate-800/50 pl-4 pr-2 py-1 rounded-full border border-slate-700">
                   <span className="text-[10px] font-bold text-slate-400 truncate max-w-[100px]">{user.email}</span>
-                  <button 
-                    onClick={() => supabase.auth.signOut()}
-                    className="p-1.5 hover:bg-red-500/20 rounded-full text-red-500 transition-colors"
-                  >
-                    <LogOut size={16} />
-                  </button>
+                  <div className="flex items-center gap-1 border-l border-slate-700 ml-2 pl-2">
+                    <button 
+                      onClick={handleDeleteAccount}
+                      className="p-1.5 hover:bg-red-500/20 rounded-full text-slate-500 hover:text-red-500 transition-colors"
+                      title="Excluir Conta Permanentemente"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                    <button 
+                      onClick={() => supabase.auth.signOut()}
+                      className="p-1.5 hover:bg-red-500/20 rounded-full text-red-500 transition-colors"
+                      title="Sair"
+                    >
+                      <LogOut size={16} />
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <button 

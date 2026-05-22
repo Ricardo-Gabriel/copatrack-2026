@@ -21,5 +21,14 @@ export function useAuth() {
     return () => subscription.unsubscribe();
   }, []);
 
-  return { user, loading };
+  const deleteAccount = async () => {
+    if (!user) return;
+    
+    const { error } = await supabase.rpc('delete_user_account');
+    if (error) throw error;
+    
+    await supabase.auth.signOut();
+  };
+
+  return { user, loading, deleteAccount };
 }
