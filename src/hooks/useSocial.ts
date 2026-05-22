@@ -159,7 +159,10 @@ export function useSocial(userId: string | undefined) {
   const sendTradeProposal = async (proposal: Omit<TradeProposal, 'id' | 'status' | 'created_at'>) => {
     const { error } = await supabase
       .from('trades')
-      .insert(proposal);
+      .insert({
+        ...proposal,
+        status: 'pending'
+      });
     
     if (error) throw error;
     await fetchProposals();
@@ -173,9 +176,6 @@ export function useSocial(userId: string | undefined) {
     
     if (error) throw error;
     await fetchProposals();
-
-    // Se aceitou, a lógica de troca real precisa ser executada (removendo de um e adicionando no outro)
-    // No mundo ideal isso seria um RPC, mas vamos simular por enquanto ou avisar o usuário
   };
 
   return {
