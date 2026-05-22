@@ -18,19 +18,19 @@ export function TradeProposalModal({
   const [requested, setRequested] = useState<string[]>([]);
   const [sending, setSending] = useState(false);
 
-  // Filtrar apenas o que eu tenho repetido
+  // Filtrar figurinhas que eu tenho repetidas E que o amigo NÃO tem
   const myDuplicates = useMemo(() => {
     return Object.entries(myCollection)
-      .filter(([_, qty]) => qty > 1)
+      .filter(([id, qty]) => qty > 1 && (!friendCollection[id] || friendCollection[id] === 0))
       .map(([id]) => id);
-  }, [myCollection]);
+  }, [myCollection, friendCollection]);
 
-  // Filtrar figurinhas que o amigo tem REPETIDAS (Regra 1: apenas repetidas podem ser trocadas)
+  // Filtrar figurinhas que o amigo tem REPETIDAS E que eu NÃO tenho
   const friendDuplicates = useMemo(() => {
     return Object.entries(friendCollection)
-      .filter(([_, qty]) => qty > 1)
+      .filter(([id, qty]) => qty > 1 && (!myCollection[id] || myCollection[id] === 0))
       .map(([id]) => id);
-  }, [friendCollection]);
+  }, [friendCollection, myCollection]);
 
   if (!isOpen) return null;
 
@@ -88,7 +88,7 @@ export function TradeProposalModal({
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest">Eu Ofereço ({offered.length})</h3>
-              <span className="text-[10px] text-cup-green font-bold">Minhas Repetidas</span>
+              <span className="text-[10px] text-cup-green font-bold">Repetidas que ele não tem</span>
             </div>
             <div className="grid grid-cols-4 gap-2 max-h-[300px] overflow-y-auto pr-2">
               {myDuplicates.map(id => (
@@ -112,7 +112,7 @@ export function TradeProposalModal({
           <div className="space-y-4 border-t md:border-t-0 md:border-l border-slate-800 pt-4 md:pt-0 md:pl-6">
             <div className="flex items-center justify-between">
               <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest">Eu Peço ({requested.length})</h3>
-              <span className="text-[10px] text-cup-blue font-bold">Repetidas de {friend.username}</span>
+              <span className="text-[10px] text-cup-blue font-bold">Repetidas que eu não tenho</span>
             </div>
             <div className="grid grid-cols-4 gap-2 max-h-[300px] overflow-y-auto pr-2">
               {friendDuplicates.map(id => (
