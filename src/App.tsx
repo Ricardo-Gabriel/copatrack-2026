@@ -144,6 +144,20 @@ function App() {
             </div>
             
             <div className="flex items-center gap-2 md:hidden">
+              {user && (
+                <button 
+                  onClick={() => setIsProposalsModalOpen(true)}
+                  className="p-2 bg-slate-800 rounded-full text-white relative"
+                  title="Trocas"
+                >
+                  <Bell size={18} />
+                  {receivedProposals.length > 0 && (
+                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-[10px] font-bold text-white flex items-center justify-center border-2 border-slate-900">
+                      {receivedProposals.length}
+                    </span>
+                  )}
+                </button>
+              )}
               {user ? (
                 <button 
                   onClick={() => supabase.auth.signOut()}
@@ -184,6 +198,20 @@ function App() {
             </div>
 
             <div className="hidden md:flex items-center gap-3">
+              {user && (
+                <button 
+                  onClick={() => setIsProposalsModalOpen(true)}
+                  className="p-2 bg-slate-800 hover:bg-slate-700 rounded-full text-white relative transition-colors"
+                  title="Trocas"
+                >
+                  <Bell size={18} />
+                  {receivedProposals.length > 0 && (
+                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-[10px] font-bold text-white flex items-center justify-center border-2 border-slate-900 animate-bounce">
+                      {receivedProposals.length}
+                    </span>
+                  )}
+                </button>
+              )}
               {user ? (
                 <div className="flex items-center gap-3 bg-slate-800/50 pl-4 pr-2 py-1 rounded-full border border-slate-700">
                   <span className="text-[10px] font-bold text-slate-400 truncate max-w-[100px]">{user.email}</span>
@@ -515,7 +543,7 @@ function App() {
                 onClick={() => setViewMode('social')}
                 className={cn(
                   "flex flex-col items-center gap-1 p-2 transition-colors relative",
-                  viewMode === 'social' ? "text-cup-green" : "text-slate-500"
+                  (viewMode === 'social' || viewMode === 'friend') ? "text-cup-green" : "text-slate-500"
                 )}
               >
                 <Users size={20} />
