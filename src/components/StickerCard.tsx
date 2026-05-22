@@ -10,7 +10,7 @@ function cn(...inputs: ClassValue[]) {
 interface StickerCardProps {
   sticker: Sticker;
   quantity: number;
-  onUpdate: (id: string, delta: number) => void;
+  onUpdate?: (id: string, delta: number) => void;
   colors?: { primary: string; secondary: string };
 }
 
@@ -79,29 +79,40 @@ export function StickerCard({ sticker, quantity, onUpdate, colors }: StickerCard
         </div>
       )}
 
-      <div className="flex items-center gap-2 mt-3 z-20">
-        <button 
-          onClick={(e) => { e.stopPropagation(); onUpdate(sticker.id, -1); }}
-          className="p-2 rounded-md bg-slate-700 hover:bg-red-500 active:scale-90 transition-all"
-          disabled={!isOwned}
-        >
-          <Minus size={14} />
-        </button>
-        
-        <span className={cn(
-          "text-xs font-bold w-4 text-center select-none",
-          isRepeated ? "text-cup-yellow" : "text-white"
-        )}>
-          {quantity}
-        </span>
+      {onUpdate ? (
+        <div className="flex items-center gap-2 mt-3 z-20">
+          <button 
+            onClick={(e) => { e.stopPropagation(); onUpdate(sticker.id, -1); }}
+            className="p-2 rounded-md bg-slate-700 hover:bg-red-500 active:scale-90 transition-all"
+            disabled={!isOwned}
+          >
+            <Minus size={14} />
+          </button>
+          
+          <span className={cn(
+            "text-xs font-bold w-4 text-center select-none",
+            isRepeated ? "text-cup-yellow" : "text-white"
+          )}>
+            {quantity}
+          </span>
 
-        <button 
-          onClick={(e) => { e.stopPropagation(); onUpdate(sticker.id, 1); }}
-          className="p-2 rounded-md bg-slate-700 hover:bg-cup-green active:scale-90 transition-all"
-        >
-          <Plus size={14} />
-        </button>
-      </div>
+          <button 
+            onClick={(e) => { e.stopPropagation(); onUpdate(sticker.id, 1); }}
+            className="p-2 rounded-md bg-slate-700 hover:bg-cup-green active:scale-90 transition-all"
+          >
+            <Plus size={14} />
+          </button>
+        </div>
+      ) : (
+        <div className="mt-3 flex items-center justify-center">
+           <span className={cn(
+            "text-xs font-bold px-3 py-1 rounded-full",
+            isOwned ? "bg-cup-green/20 text-cup-green" : "bg-slate-800 text-slate-500"
+          )}>
+            {quantity > 0 ? `${quantity} UNID.` : 'FALTA'}
+          </span>
+        </div>
+      )}
 
       {isRepeated && (
         <div className="absolute -top-2 -right-2 bg-cup-yellow text-cup-dark text-[10px] font-black px-1.5 py-0.5 rounded-full shadow-md z-30">

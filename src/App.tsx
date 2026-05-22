@@ -25,7 +25,7 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-type ViewMode = 'all' | 'missing' | 'duplicates' | 'history' | 'summary' | 'friend';
+type ViewMode = 'all' | 'missing' | 'duplicates' | 'history' | 'summary' | 'friend' | 'social';
 
 function App() {
   const { collection, history, teamsMetadata, user, updateSticker, executeTrade, updateTeamMetadata } = useCollection();
@@ -39,7 +39,6 @@ function App() {
   const [viewMode, setViewMode] = useState<ViewMode>('all');
   const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [isFriendsModalOpen, setIsFriendsModalOpen] = useState(false);
   const [isTradeProposalModalOpen, setIsTradeProposalModalOpen] = useState(false);
   const [isProposalsModalOpen, setIsProposalsModalOpen] = useState(false);
   const [editingTeam, setEditingTeam] = useState<Team | null>(null);
@@ -54,7 +53,6 @@ function App() {
       setViewingFriend(friend);
       setFriendState(state);
       setViewMode('friend');
-      setIsFriendsModalOpen(false);
     } else {
       alert('Não foi possível carregar o álbum deste amigo.');
     }
@@ -325,6 +323,23 @@ function App() {
               )}
             </div>
           </section>
+        ) : viewMode === 'social' ? (
+          <div className="max-w-2xl mx-auto">
+            <FriendsModal 
+              isOpen={true}
+              onClose={() => setViewMode('all')}
+              friends={friends}
+              pendingRequests={pendingRequests}
+              sentRequests={sentRequests}
+              onSearch={searchUser}
+              onSendRequest={sendFriendRequest}
+              onAcceptRequest={acceptFriendRequest}
+              onDeclineRequest={declineFriendRequest}
+              onRemoveFriend={removeFriend}
+              onViewFriendCollection={handleViewFriend}
+              isInline={true}
+            />
+          </div>
         ) : (
           <div className="space-y-10">
             {filteredTeams.length === 0 ? (
@@ -365,18 +380,21 @@ function App() {
                   </div>
 
                   <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-3">
-                    {team.stickers.map(sticker => (
-                      <StickerCard 
-                        key={sticker.id}
-                        sticker={sticker}
-                        quantity={collection[sticker.id] || 0}
-                        onUpdate={updateSticker}
-                        colors={team.primaryColor && team.secondaryColor ? {
-                          primary: team.primaryColor,
-                          secondary: team.secondaryColor
-                        } : undefined}
-                      />
-                    ))}
+                    {team.stickers.map(sticker => {
+                      const activeCollection = viewMode === 'friend' && friendState ? friendState.collection : collection;
+                      return (
+                        <StickerCard 
+                          key={sticker.id}
+                          sticker={sticker}
+                          quantity={activeCollection[sticker.id] || 0}
+                          onUpdate={viewMode === 'friend' ? undefined : updateSticker}
+                          colors={team.primaryColor && team.secondaryColor ? {
+                            primary: team.primaryColor,
+                            secondary: team.secondaryColor
+                          } : undefined}
+                        />
+                      );
+                    })}
                   </div>
                 </section>
               ))
@@ -396,20 +414,6 @@ function App() {
       <AuthModal 
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
-      />
-
-      <FriendsModal 
-        isOpen={isFriendsModalOpen}
-        onClose={() => setIsFriendsModalOpen(false)}
-        friends={friends}
-        pendingRequests={pendingRequests}
-        sentRequests={sentRequests}
-        onSearch={searchUser}
-        onSendRequest={sendFriendRequest}
-        onAcceptRequest={acceptFriendRequest}
-        onDeclineRequest={declineFriendRequest}
-        onRemoveFriend={removeFriend}
-        onViewFriendCollection={handleViewFriend}
       />
 
       <ProposalsModal 
@@ -506,8 +510,11 @@ function App() {
           {user && (
             <>
               <button 
-                onClick={() => setIsFriendsModalOpen(true)}
-                className="flex flex-col items-center gap-1 p-2 text-slate-500 relative"
+                onClick={() => setViewMode('social')}
+                className={cn(
+                  "flex flex-col items-center gap-1 p-2 transition-colors relative",
+                  viewMode === 'social' ? "text-cup-green" : "text-slate-500"
+                )}
               >
                 <Users size={20} />
                 <span className="text-[10px] font-bold">Amigos</span>
