@@ -169,7 +169,11 @@ export function useCollection() {
     const newHistory = [...state.history];
     const timestamp = Date.now();
 
-    trade.stickersOut.forEach(id => {
+    // Garantir apenas uma unidade de cada figurinha
+    const uniqueOut = [...new Set(trade.stickersOut)];
+    const uniqueIn = [...new Set(trade.stickersIn)];
+
+    uniqueOut.forEach(id => {
       const current = newCollection[id] || 0;
       if (current > 0) {
         const next = current - 1;
@@ -187,7 +191,7 @@ export function useCollection() {
       }
     });
 
-    trade.stickersIn.forEach(id => {
+    uniqueIn.forEach(id => {
       newCollection[id] = (newCollection[id] || 0) + 1;
       newHistory.unshift({
         id: crypto.randomUUID(),
@@ -219,12 +223,15 @@ export function useCollection() {
     const friendState = data.state as AppState;
     const newCollection = { ...friendState.collection };
 
-    // 2. Aplicar as mudanças (Sempre 1 unidade por figurinha na lista)
-    stickersIn.forEach(id => {
+    // 2. Aplicar as mudanças (Deduplicar para garantir 1 unidade por ID)
+    const uniqueIn = [...new Set(stickersIn)];
+    const uniqueOut = [...new Set(stickersOut)];
+
+    uniqueIn.forEach(id => {
       newCollection[id] = (newCollection[id] || 0) + 1;
     });
 
-    stickersOut.forEach(id => {
+    uniqueOut.forEach(id => {
       const current = newCollection[id] || 0;
       if (current > 0) {
         const next = current - 1;
@@ -246,8 +253,8 @@ export function useCollection() {
               timestamp: Date.now(),
               stickerId: 'TROCA',
               type: 'trade-in',
-              quantity: stickersIn.length,
-              details: `Recebeu ${stickersIn.length} figurinha(s) em uma troca.`
+              quantity: uniqueIn.length,
+              details: `Recebeu ${uniqueIn.length} figurinha(s) em uma troca.`
             },
             ...friendState.history
           ].slice(0, 100)
