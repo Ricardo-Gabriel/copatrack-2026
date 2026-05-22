@@ -63,25 +63,47 @@ export function useSocial(userId: string | undefined) {
     setPendingRequests(formattedFriends.filter(f => f.status === 'pending' && f.receiver_id === userId));
     setSentRequests(formattedFriends.filter(f => f.status === 'pending' && f.sender_id === userId));
   };
+const fetchProposals = async () => {
+  if (!userId) return;
 
-  const fetchProposals = async () => {
-    if (!userId) return;
-    const { data, error } = await supabase
-      .from('trades')
-      .select(`
-        *,
-        sender:sender_id (id, username, email, avatar_url)
-      `)
-      .eq('receiver_id', userId)
-      .eq('status', 'pending');
+  // Busca as propostas primeiro
+  const { data: trades, error: tradesError } = await supabase
+    .from('trades')
+    .select('*')
+    .eq('receiver_id', userId)
+    .eq('status', 'pending');
 
-    if (error) {
-      console.error("Erro ao buscar propostas:", error);
-      return;
-    }
+  if (tradesError) {
+    console.error("Erro ao buscar propostas:", tradesError);
+    return;
+  }
 
-    setReceivedProposals(data.map((t: any) => ({ ...t, sender_profile: t.sender })));
-  };
+  if (!trades || trades.length === 0) {
+    setReceivedProposals([]);
+    return;
+  }
+
+  // Busca os perfis dos remetentes manualmente para evitar erro de relacionamento
+  const senderIds = [...new Set(trades.map(t => t.sender_id))];
+  const { data: profiles, error: profilesError } = await supabase
+    .from('profiles')
+    .select('id, username, email, avatar_url')
+    .in('id', senderIds);
+
+  if (profilesError) {
+    console.error("Erro ao buscar perfis dos remetentes:", profilesError);
+    setReceivedProposals(trades);
+    return;
+  }
+
+  const proposalsWithProfiles = trades.map(t => ({
+    ...t,
+    sender_profile: profiles.find(p => p.id === t.sender_id)
+  }));
+
+  console.log("Propostas carregadas com sucesso:", proposalsWithProfiles);
+  setReceivedProposals(proposalsWithProfiles);
+};
 
   const searchUser = async (query: string) => {
     const { data, error } = await supabase
@@ -157,14 +179,23 @@ export function useSocial(userId: string | undefined) {
   };
 
   const sendTradeProposal = async (proposal: Omit<TradeProposal, 'id' | 'status' | 'created_at'>) => {
-    const { error } = await supabase
+    console.log("Iniciando envio de proposta...", proposal);
+    const { data, error } = await supabase
       .from('trades')
       .insert({
-        ...proposal,
+        sender_id: proposal.sender_id,
+        receiver_id: proposal.receiver_id,
+        stickers_offered: Array.isArray(proposal.stickers_offered) ? proposal.stickers_offered : [proposal.stickers_offered],
+        stickers_requested: Array.isArray(proposal.stickers_requested) ? proposal.stickers_requested : [proposal.stickers_requested],
         status: 'pending'
-      });
+      })
+      .select();
     
-    if (error) throw error;
+    if (error) {
+      console.error("ERRO CRÍTICO SUPABASE (Troca):", error);
+      throw error;
+    }
+    console.log("Resposta do servidor:", data);
     await fetchProposals();
   };
 
