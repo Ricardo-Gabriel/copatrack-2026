@@ -219,7 +219,7 @@ export function useCollection() {
     const friendState = data.state as AppState;
     const newCollection = { ...friendState.collection };
 
-    // 2. Aplicar as mudanças
+    // 2. Aplicar as mudanças (Sempre 1 unidade por figurinha na lista)
     stickersIn.forEach(id => {
       newCollection[id] = (newCollection[id] || 0) + 1;
     });
@@ -244,10 +244,10 @@ export function useCollection() {
             {
               id: crypto.randomUUID(),
               timestamp: Date.now(),
-              stickerId: 'TRADE',
+              stickerId: 'TROCA',
               type: 'trade-in',
-              quantity: stickersIn.length + stickersOut.length,
-              details: `Troca realizada com sucesso!`
+              quantity: stickersIn.length,
+              details: `Recebeu ${stickersIn.length} figurinha(s) em uma troca.`
             },
             ...friendState.history
           ].slice(0, 100)

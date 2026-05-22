@@ -78,6 +78,7 @@ export function TradeProposalModal({
               <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest">Eu Ofereço ({offered.length})</h3>
               <span className="text-[10px] text-cup-green font-bold">Apenas minhas repetidas</span>
             </div>
+            <p className="text-[9px] text-slate-500 italic">Cada figurinha selecionada enviará 1 unidade para seu amigo.</p>
             <div className="grid grid-cols-4 gap-2 max-h-[300px] overflow-y-auto pr-2">
               {myDuplicates.map(id => (
                 <button 
@@ -91,7 +92,7 @@ export function TradeProposalModal({
                 </button>
               ))}
               {myDuplicates.length === 0 && (
-                <div className="col-span-4 py-8 text-center text-slate-600 text-xs italic">Você não tem repetidas para oferecer.</div>
+                <div className="col-span-4 py-8 text-center text-slate-600 text-xs italic">Você não tem figurinhas repetidas para oferecer.</div>
               )}
             </div>
           </div>
@@ -102,6 +103,7 @@ export function TradeProposalModal({
               <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest">Eu Peço ({requested.length})</h3>
               <span className="text-[10px] text-cup-blue font-bold">Figurinhas que ele tem</span>
             </div>
+            <p className="text-[9px] text-slate-500 italic">Cada figurinha selecionada adicionará 1 unidade ao seu álbum.</p>
             <div className="grid grid-cols-4 gap-2 max-h-[300px] overflow-y-auto pr-2">
               {friendAvailable.map(id => (
                 <button 
@@ -115,7 +117,7 @@ export function TradeProposalModal({
                 </button>
               ))}
               {friendAvailable.length === 0 && (
-                <div className="col-span-4 py-8 text-center text-slate-600 text-xs italic">Seu amigo não tem figurinhas.</div>
+                <div className="col-span-4 py-8 text-center text-slate-600 text-xs italic">Seu amigo não tem figurinhas disponíveis.</div>
               )}
             </div>
           </div>
