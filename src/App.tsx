@@ -1,35 +1,73 @@
 import { useCollection } from './hooks/useCollection';
+import { useSocial } from './hooks/useSocial';
 import { TEAMS_DATA } from './data/stickers';
 import { StickerCard } from './components/StickerCard';
 import { TradeModal } from './components/TradeModal';
 import { TeamEditorModal } from './components/TeamEditorModal';
 import { AuthModal } from './components/AuthModal';
+import { FriendsModal } from './components/FriendsModal';
+import { TradeProposalModal } from './components/TradeProposalModal';
+import { ProposalsModal } from './components/ProposalsModal';
 import { SummaryTable } from './components/SummaryTable';
 import { FLAG_IMAGES } from './data/flags';
 import { supabase } from './lib/supabase';
 import { 
   Trophy, Search, Share2, LayoutGrid, Copy, Ban, 
   History as HistoryIcon, X, ArrowRightLeft, Palette, 
-  User as UserIcon, LogOut, Table as TableIcon 
+  User as UserIcon, LogOut, Table as TableIcon, Users, Bell
 } from 'lucide-react';
 import { useState, useMemo } from 'react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import type { Team } from './types';
+import type { Team, Profile, AppState } from './types';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-type ViewMode = 'all' | 'missing' | 'duplicates' | 'history' | 'summary';
+type ViewMode = 'all' | 'missing' | 'duplicates' | 'history' | 'summary' | 'friend';
 
 function App() {
   const { collection, history, teamsMetadata, user, updateSticker, executeTrade, updateTeamMetadata } = useCollection();
+  const { 
+    friends, pendingRequests, receivedProposals, searchUser, sendFriendRequest, 
+    acceptFriendRequest, getFriendCollection, sendTradeProposal, handleProposalAction 
+  } = useSocial(user?.id);
+
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<ViewMode>('all');
   const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isFriendsModalOpen, setIsFriendsModalOpen] = useState(false);
+  const [isTradeProposalModalOpen, setIsTradeProposalModalOpen] = useState(false);
+  const [isProposalsModalOpen, setIsProposalsModalOpen] = useState(false);
   const [editingTeam, setEditingTeam] = useState<Team | null>(null);
+
+  // Estado para visualização de amigo
+  const [viewingFriend, setViewingFriend] = useState<Profile | null>(null);
+  const [friendState, setFriendState] = useState<AppState | null>(null);
+
+  const handleViewFriend = async (friend: Profile) => {
+    const state = await getFriendCollection(friend.id);
+    if (state) {
+      setViewingFriend(friend);
+      setFriendState(state);
+      setViewMode('friend');
+      setIsFriendsModalOpen(false);
+    } else {
+      alert('Não foi possível carregar o álbum deste amigo.');
+    }
+  };
+
+  const handleSendProposal = async (offered: string[], requested: string[]) => {
+    if (!user || !viewingFriend) return;
+    await sendTradeProposal({
+      sender_id: user.id,
+      receiver_id: viewingFriend.id,
+      stickers_offered: offered,
+      stickers_requested: requested
+    });
+  };
 
   const stats = useMemo(() => {
     const totalStickers = TEAMS_DATA.reduce((acc, team) => acc + team.stickers.length, 0);
@@ -58,9 +96,23 @@ function App() {
     }
   };
 
+  const handleViewFriend = async (friend: Profile) => {
+    const state = await getFriendCollection(friend.id);
+    if (state) {
+      setViewingFriend(friend);
+      setFriendState(state);
+      setViewMode('friend');
+      setIsFriendsModalOpen(false);
+    } else {
+      alert('Não foi possível carregar o álbum deste amigo.');
+    }
+  };
+
   const filteredTeams = useMemo(() => {
+    const activeCollection = viewMode === 'friend' && friendState ? friendState.collection : collection;
+
     return TEAMS_DATA.map(team => {
-      const meta = teamsMetadata[team.id] || { 
+      const meta = (viewMode === 'friend' && friendState ? friendState.teamsMetadata[team.id] : teamsMetadata[team.id]) || { 
         name: team.name, 
         flag: team.flag, 
         primaryColor: team.primaryColor, 
@@ -70,7 +122,7 @@ function App() {
       const filteredStickers = team.stickers.filter(s => {
         const matchesSearch = s.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                             s.id.toLowerCase().includes(searchTerm.toLowerCase());
-        const qty = collection[s.id] || 0;
+        const qty = activeCollection[s.id] || 0;
         
         if (viewMode === 'missing') return matchesSearch && qty === 0;
         if (viewMode === 'duplicates') return matchesSearch && qty > 1;
@@ -86,7 +138,7 @@ function App() {
         stickers: filteredStickers 
       };
     }).filter(team => team.stickers.length > 0);
-  }, [searchTerm, viewMode, collection, teamsMetadata]);
+  }, [searchTerm, viewMode, collection, teamsMetadata, friendState]);
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 w-full pb-24">
@@ -168,6 +220,33 @@ function App() {
       </header>
 
       <main className="max-w-6xl mx-auto p-4 space-y-8">
+        {viewMode === 'friend' && viewingFriend && (
+          <div className="bg-cup-blue/10 border border-cup-blue/30 p-4 rounded-2xl flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-cup-blue text-white rounded-full flex items-center justify-center font-black text-xl">
+                {viewingFriend.username[0].toUpperCase()}
+              </div>
+              <div>
+                <h2 className="font-black text-cup-blue uppercase italic tracking-tight">Álbum de {viewingFriend.username}</h2>
+                <p className="text-xs text-slate-500 italic">Você está visualizando a coleção do seu amigo.</p>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <button 
+                onClick={() => setIsTradeProposalModalOpen(true)}
+                className="px-4 py-2 bg-cup-green hover:bg-green-600 text-white rounded-xl text-xs font-bold transition-all shadow-lg shadow-green-900/20 flex items-center gap-2"
+              >
+                <ArrowRightLeft size={14} /> PROPOR TROCA
+              </button>
+              <button 
+                onClick={() => { setViewMode('all'); setViewingFriend(null); setFriendState(null); }}
+                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs font-bold transition-colors"
+              >
+                VOLTAR
+              </button>
+            </div>
+          </div>
+        )}
         {/* Stats Dashboard */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-xl relative">
@@ -330,6 +409,35 @@ function App() {
         onClose={() => setIsAuthModalOpen(false)}
       />
 
+      <FriendsModal 
+        isOpen={isFriendsModalOpen}
+        onClose={() => setIsFriendsModalOpen(false)}
+        friends={friends}
+        pendingRequests={pendingRequests}
+        onSearch={searchUser}
+        onSendRequest={sendFriendRequest}
+        onAcceptRequest={acceptFriendRequest}
+        onViewFriendCollection={handleViewFriend}
+      />
+
+      <ProposalsModal 
+        isOpen={isProposalsModalOpen}
+        onClose={() => setIsProposalsModalOpen(false)}
+        proposals={receivedProposals}
+        onAction={handleProposalAction}
+      />
+
+      {viewingFriend && friendState && (
+        <TradeProposalModal 
+          isOpen={isTradeProposalModalOpen}
+          onClose={() => setIsTradeProposalModalOpen(false)}
+          friend={viewingFriend}
+          myCollection={collection}
+          friendCollection={friendState.collection}
+          onSendProposal={handleSendProposal}
+        />
+      )}
+
       {editingTeam && (
         <TeamEditorModal 
           isOpen={true}
@@ -402,6 +510,36 @@ function App() {
             <HistoryIcon size={20} />
             <span className="text-[10px] font-bold">Histórico</span>
           </button>
+
+          {user && (
+            <>
+              <button 
+                onClick={() => setIsFriendsModalOpen(true)}
+                className="flex flex-col items-center gap-1 p-2 text-slate-500 relative"
+              >
+                <Users size={20} />
+                <span className="text-[10px] font-bold">Amigos</span>
+                {pendingRequests.length > 0 && (
+                  <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 rounded-full text-[10px] font-bold text-white flex items-center justify-center border-2 border-slate-900">
+                    {pendingRequests.length}
+                  </span>
+                )}
+              </button>
+
+              <button 
+                onClick={() => setIsProposalsModalOpen(true)}
+                className="flex flex-col items-center gap-1 p-2 text-slate-500 relative"
+              >
+                <Bell size={20} />
+                <span className="text-[10px] font-bold">Trocas</span>
+                {receivedProposals.length > 0 && (
+                  <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 rounded-full text-[10px] font-bold text-white flex items-center justify-center border-2 border-slate-900">
+                    {receivedProposals.length}
+                  </span>
+                )}
+              </button>
+            </>
+          )}
         </div>
       </nav>
     </div>

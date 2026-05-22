@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LogIn, UserPlus, X, Mail, Lock, Loader2 } from 'lucide-react';
+import { LogIn, UserPlus, X, Mail, Lock, Loader2, User as UserIcon } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 interface AuthModalProps {
@@ -10,6 +10,7 @@ interface AuthModalProps {
 export function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -32,6 +33,11 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
         const { error } = await supabase.auth.signUp({
           email,
           password,
+          options: {
+            data: {
+              username: username
+            }
+          }
         });
         if (error) throw error;
         alert('Confirme seu e-mail para ativar a conta!');
@@ -65,6 +71,22 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            {!isLogin && (
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Nome de Usuário</label>
+                <div className="relative">
+                  <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
+                  <input 
+                    type="text"
+                    required
+                    className="w-full bg-slate-800 border-none rounded-xl py-3 pl-10 pr-4 text-sm focus:ring-2 focus:ring-cup-green outline-none"
+                    placeholder="seu_apelido"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                  />
+                </div>
+              </div>
+            )}
             <div className="space-y-1.5">
               <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">E-mail</label>
               <div className="relative">

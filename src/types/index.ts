@@ -50,6 +50,33 @@ export interface TeamMetadata {
   secondaryColor?: string;
 }
 
+export interface Profile {
+  id: string;
+  username: string;
+  email: string;
+  avatar_url?: string;
+}
+
+export interface Friendship {
+  id: string;
+  sender_id: string;
+  receiver_id: string;
+  status: 'pending' | 'accepted';
+  created_at: string;
+  friend_profile?: Profile; // Para facilitar a exibição
+}
+
+export interface TradeProposal {
+  id: string;
+  sender_id: string;
+  receiver_id: string;
+  stickers_offered: string[];
+  stickers_requested: string[];
+  status: 'pending' | 'accepted' | 'declined' | 'cancelled';
+  created_at: string;
+  sender_profile?: Profile;
+}
+
 export interface AppState {
   collection: CollectionState;
   history: Transaction[];
