@@ -1,6 +1,5 @@
 import { useState, useMemo } from 'react';
-import { X, ArrowRightLeft, Plus, Trash2, Loader2, Send } from 'lucide-react';
-import { TEAMS_DATA } from '../data/stickers';
+import { X, ArrowRightLeft, Loader2, Send } from 'lucide-react';
 import type { CollectionState, Profile } from '../types';
 
 interface TradeProposalModalProps {

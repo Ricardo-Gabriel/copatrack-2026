@@ -1,4 +1,4 @@
-import { X, Check, Ban, ArrowRightLeft, Loader2 } from 'lucide-react';
+import { X, Check, Ban, ArrowRightLeft } from 'lucide-react';
 import type { TradeProposal } from '../types';
 
 interface ProposalsModalProps {

@@ -96,18 +96,6 @@ function App() {
     }
   };
 
-  const handleViewFriend = async (friend: Profile) => {
-    const state = await getFriendCollection(friend.id);
-    if (state) {
-      setViewingFriend(friend);
-      setFriendState(state);
-      setViewMode('friend');
-      setIsFriendsModalOpen(false);
-    } else {
-      alert('Não foi possível carregar o álbum deste amigo.');
-    }
-  };
-
   const filteredTeams = useMemo(() => {
     const activeCollection = viewMode === 'friend' && friendState ? friendState.collection : collection;
 

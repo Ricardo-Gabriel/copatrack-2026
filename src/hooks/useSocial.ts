@@ -6,7 +6,6 @@ export function useSocial(userId: string | undefined) {
   const [friends, setFriends] = useState<Friendship[]>([]);
   const [pendingRequests, setPendingRequests] = useState<Friendship[]>([]);
   const [receivedProposals, setReceivedProposals] = useState<TradeProposal[]>([]);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!userId) return;
