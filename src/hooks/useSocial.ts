@@ -144,7 +144,14 @@ export function useSocial(userId: string | undefined) {
       .eq('id', friendId)
       .single();
 
-    if (error) return null;
+    if (error) {
+      console.error(`Erro ao carregar coleção do amigo (${friendId}):`, error);
+      // Se o erro for "não encontrado", retornamos um estado vazio para não quebrar a UI
+      if (error.code === 'PGRST116') {
+        return { collection: {}, history: [], teamsMetadata: {} } as AppState;
+      }
+      return null;
+    }
     return data.state as AppState;
   };
 

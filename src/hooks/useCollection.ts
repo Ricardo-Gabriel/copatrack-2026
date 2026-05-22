@@ -60,19 +60,30 @@ export function useCollection() {
       if (data?.state) {
         setState(data.state as AppState);
       } else {
-        // Se não houver dados no Supabase, subir os locais
+        // Se não houver dados no Supabase, subir os locais ou criar um estado vazio inicial
         const localData = localStorage.getItem(LOCAL_STORAGE_KEY);
+        let initialStateToUpload: AppState;
+        
         if (localData) {
           try {
-            const parsed = JSON.parse(localData);
-            await supabase.from('user_data').upsert({
-              id: user.id,
-              state: parsed,
-              updated_at: new Date().toISOString()
-            });
+            initialStateToUpload = JSON.parse(localData);
           } catch (e) {
-            console.error("Erro ao subir dados iniciais:", e);
+            initialStateToUpload = { collection: {}, history: [], teamsMetadata: {} };
           }
+        } else {
+          initialStateToUpload = { collection: {}, history: [], teamsMetadata: {} };
+        }
+
+        const { error: upsertError } = await supabase.from('user_data').upsert({
+          id: user.id,
+          state: initialStateToUpload,
+          updated_at: new Date().toISOString()
+        });
+
+        if (upsertError) {
+          console.error("Erro ao criar dados iniciais no Supabase:", upsertError);
+        } else {
+          setState(initialStateToUpload);
         }
       }
     };
