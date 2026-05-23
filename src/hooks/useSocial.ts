@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import type { Profile, Friendship, TradeProposal, AppState } from '../types';
 
@@ -8,9 +8,81 @@ export function useSocial(userId: string | undefined) {
   const [sentRequests, setSentRequests] = useState<Friendship[]>([]);
   const [receivedProposals, setReceivedProposals] = useState<TradeProposal[]>([]);
 
+  const fetchFriends = useCallback(async () => {
+    if (!userId) return;
+    
+    // Buscar amizades aceitas ou pendentes
+    const { data, error } = await supabase
+      .from('friendships')
+      .select(`
+        *,
+        sender:sender_id (id, username, email, avatar_url),
+        receiver:receiver_id (id, username, email, avatar_url)
+      `)
+      .or(`sender_id.eq.${userId},receiver_id.eq.${userId}`);
+
+    if (error) {
+      console.error("Erro ao buscar amigos:", error);
+      return;
+    }
+
+    const formattedFriends = data.map((f: { sender_id: string; receiver: Profile; sender: Profile }) => {
+      const isSender = f.sender_id === userId;
+      const friendProfile = isSender ? f.receiver : f.sender;
+      return { ...f, friend_profile: friendProfile };
+    }).filter(f => f.friend_profile !== null);
+
+    setFriends(formattedFriends.filter(f => f.status === 'accepted'));
+    setPendingRequests(formattedFriends.filter(f => f.status === 'pending' && f.receiver_id === userId));
+    setSentRequests(formattedFriends.filter(f => f.status === 'pending' && f.sender_id === userId));
+  }, [userId]);
+
+  const fetchProposals = useCallback(async () => {
+    if (!userId) return;
+
+    // Busca as propostas primeiro
+    const { data: trades, error: tradesError } = await supabase
+      .from('trades')
+      .select('*')
+      .eq('receiver_id', userId)
+      .eq('status', 'pending');
+
+    if (tradesError) {
+      console.error("Erro ao buscar propostas:", tradesError);
+      return;
+    }
+
+    if (!trades || trades.length === 0) {
+      setReceivedProposals([]);
+      return;
+    }
+
+    // Busca os perfis dos remetentes manualmente para evitar erro de relacionamento
+    const senderIds = [...new Set(trades.map(t => t.sender_id))];
+    const { data: profiles, error: profilesError } = await supabase
+      .from('profiles')
+      .select('id, username, email, avatar_url')
+      .in('id', senderIds);
+
+    if (profilesError) {
+      console.error("Erro ao buscar perfis dos remetentes:", profilesError);
+      setReceivedProposals(trades);
+      return;
+    }
+
+    const proposalsWithProfiles = trades.map(t => ({
+      ...t,
+      sender_profile: profiles.find(p => p.id === t.sender_id)
+    }));
+
+    console.log("Propostas carregadas com sucesso:", proposalsWithProfiles);
+    setReceivedProposals(proposalsWithProfiles);
+  }, [userId]);
+
   useEffect(() => {
     if (!userId) return;
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchFriends();
     fetchProposals();
 
@@ -33,77 +105,7 @@ export function useSocial(userId: string | undefined) {
       supabase.removeChannel(friendsChannel);
       supabase.removeChannel(tradesChannel);
     };
-  }, [userId]);
-
-  const fetchFriends = async () => {
-    if (!userId) return;
-    
-    // Buscar amizades aceitas ou pendentes
-    const { data, error } = await supabase
-      .from('friendships')
-      .select(`
-        *,
-        sender:sender_id (id, username, email, avatar_url),
-        receiver:receiver_id (id, username, email, avatar_url)
-      `)
-      .or(`sender_id.eq.${userId},receiver_id.eq.${userId}`);
-
-    if (error) {
-      console.error("Erro ao buscar amigos:", error);
-      return;
-    }
-
-    const formattedFriends = data.map((f: any) => {
-      const isSender = f.sender_id === userId;
-      const friendProfile = isSender ? f.receiver : f.sender;
-      return { ...f, friend_profile: friendProfile };
-    }).filter(f => f.friend_profile !== null);
-
-    setFriends(formattedFriends.filter(f => f.status === 'accepted'));
-    setPendingRequests(formattedFriends.filter(f => f.status === 'pending' && f.receiver_id === userId));
-    setSentRequests(formattedFriends.filter(f => f.status === 'pending' && f.sender_id === userId));
-  };
-const fetchProposals = async () => {
-  if (!userId) return;
-
-  // Busca as propostas primeiro
-  const { data: trades, error: tradesError } = await supabase
-    .from('trades')
-    .select('*')
-    .eq('receiver_id', userId)
-    .eq('status', 'pending');
-
-  if (tradesError) {
-    console.error("Erro ao buscar propostas:", tradesError);
-    return;
-  }
-
-  if (!trades || trades.length === 0) {
-    setReceivedProposals([]);
-    return;
-  }
-
-  // Busca os perfis dos remetentes manualmente para evitar erro de relacionamento
-  const senderIds = [...new Set(trades.map(t => t.sender_id))];
-  const { data: profiles, error: profilesError } = await supabase
-    .from('profiles')
-    .select('id, username, email, avatar_url')
-    .in('id', senderIds);
-
-  if (profilesError) {
-    console.error("Erro ao buscar perfis dos remetentes:", profilesError);
-    setReceivedProposals(trades);
-    return;
-  }
-
-  const proposalsWithProfiles = trades.map(t => ({
-    ...t,
-    sender_profile: profiles.find(p => p.id === t.sender_id)
-  }));
-
-  console.log("Propostas carregadas com sucesso:", proposalsWithProfiles);
-  setReceivedProposals(proposalsWithProfiles);
-};
+  }, [userId, fetchFriends, fetchProposals]);
 
   const searchUser = async (query: string) => {
     const { data, error } = await supabase

@@ -67,7 +67,7 @@ export function useCollection() {
         if (localData) {
           try {
             initialStateToUpload = JSON.parse(localData);
-          } catch (e) {
+          } catch {
             initialStateToUpload = { collection: {}, history: [], teamsMetadata: {} };
           }
         } else {

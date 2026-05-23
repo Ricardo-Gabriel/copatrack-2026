@@ -1,23 +1,23 @@
-import f1 from '../assets/Flags/algeria.jpg';
-import f2 from '../assets/Flags/argentina.jpg';
-import f3 from '../assets/Flags/australia.jpg';
-import f4 from '../assets/Flags/austria.jpg';
-import f5 from '../assets/Flags/belgium.jpg';
-import f6 from '../assets/Flags/bosnia.jpg';
-import f7 from '../assets/Flags/brazil.jpg';
-import f8 from '../assets/Flags/canada.jpg';
-import f9 from '../assets/Flags/ivory_coast.jpg';
-import f10 from '../assets/Flags/drcongo.jpg';
-import f11 from '../assets/Flags/colombia.jpg';
-import f12 from '../assets/Flags/capeverde.jpg';
-import f13 from '../assets/Flags/croatia.jpg';
-import f14 from '../assets/Flags/curacao.jpg';
-import f15 from '../assets/Flags/czechia.jpg';
-import f16 from '../assets/Flags/ecuador.jpg';
-import f17 from '../assets/Flags/egypt.jpg';
-import f18 from '../assets/Flags/england.jpg';
-import f19 from '../assets/Flags/spain.jpg';
-import f20 from '../assets/Flags/france.jpg';
+import f2 from '../assets/Flags/algeria.jpg';
+import f3 from '../assets/Flags/argentina.jpg';
+import f4 from '../assets/Flags/australia.jpg';
+import f5 from '../assets/Flags/austria.jpg';
+import f6 from '../assets/Flags/belgium.jpg';
+import f7 from '../assets/Flags/bosnia.jpg';
+import f8 from '../assets/Flags/brazil.jpg';
+import f9 from '../assets/Flags/canada.jpg';
+import f10 from '../assets/Flags/ivory_coast.jpg';
+import f11 from '../assets/Flags/drcongo.jpg';
+import f12 from '../assets/Flags/colombia.jpg';
+import f13 from '../assets/Flags/capeverde.jpg';
+import f14 from '../assets/Flags/croatia.jpg';
+import f15 from '../assets/Flags/curacao.jpg';
+import f16 from '../assets/Flags/czechia.jpg';
+import f17 from '../assets/Flags/ecuador.jpg';
+import f18 from '../assets/Flags/egypt.jpg';
+import f19 from '../assets/Flags/england.jpg';
+import f20 from '../assets/Flags/spain.jpg';
+import f21 from '../assets/Flags/france.jpg';
 import f22 from '../assets/Flags/germanyx.jpg';
 import f23 from '../assets/Flags/ghana.jpg';
 import f24 from '../assets/Flags/haiti.jpg';
@@ -48,26 +48,26 @@ import f48 from '../assets/Flags/usax.jpg';
 import f49 from '../assets/Flags/uzbekistan.jpg';
 
 export const FLAG_IMAGES: Record<string, string> = {
-  '/src/assets/Flags/algeria.jpg': f1,
-  '/src/assets/Flags/argentina.jpg': f2,
-  '/src/assets/Flags/australia.jpg': f3,
-  '/src/assets/Flags/austria.jpg': f4,
-  '/src/assets/Flags/belgium.jpg': f5,
-  '/src/assets/Flags/bosnia.jpg': f6,
-  '/src/assets/Flags/brazil.jpg': f7,
-  '/src/assets/Flags/canada.jpg': f8,
-  '/src/assets/Flags/ivory_coast.jpg': f9,
-  '/src/assets/Flags/drcongo.jpg': f10,
-  '/src/assets/Flags/colombia.jpg': f11,
-  '/src/assets/Flags/capeverde.jpg': f12,
-  '/src/assets/Flags/croatia.jpg': f13,
-  '/src/assets/Flags/curacao.jpg': f14,
-  '/src/assets/Flags/czechia.jpg': f15,
-  '/src/assets/Flags/ecuador.jpg': f16,
-  '/src/assets/Flags/egypt.jpg': f17,
-  '/src/assets/Flags/england.jpg': f18,
-  '/src/assets/Flags/spain.jpg': f19,
-  '/src/assets/Flags/france.jpg': f20,
+  '/src/assets/Flags/algeria.jpg': f2,
+  '/src/assets/Flags/argentina.jpg': f3,
+  '/src/assets/Flags/australia.jpg': f4,
+  '/src/assets/Flags/austria.jpg': f5,
+  '/src/assets/Flags/belgium.jpg': f6,
+  '/src/assets/Flags/bosnia.jpg': f7,
+  '/src/assets/Flags/brazil.jpg': f8,
+  '/src/assets/Flags/canada.jpg': f9,
+  '/src/assets/Flags/ivory_coast.jpg': f10,
+  '/src/assets/Flags/drcongo.jpg': f11,
+  '/src/assets/Flags/colombia.jpg': f12,
+  '/src/assets/Flags/capeverde.jpg': f13,
+  '/src/assets/Flags/croatia.jpg': f14,
+  '/src/assets/Flags/curacao.jpg': f15,
+  '/src/assets/Flags/czechia.jpg': f16,
+  '/src/assets/Flags/ecuador.jpg': f17,
+  '/src/assets/Flags/egypt.jpg': f18,
+  '/src/assets/Flags/england.jpg': f19,
+  '/src/assets/Flags/spain.jpg': f20,
+  '/src/assets/Flags/france.jpg': f21,
   '/src/assets/Flags/germanyx.jpg': f22,
   '/src/assets/Flags/ghana.jpg': f23,
   '/src/assets/Flags/haiti.jpg': f24,

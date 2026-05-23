@@ -48,7 +48,7 @@ export function TradeProposalModal({
       await onSendProposal(offered, requested);
       alert('Proposta enviada!');
       onClose();
-    } catch (e) {
+    } catch {
       alert('Erro ao enviar proposta.');
     } finally {
       setSending(false);
@@ -70,7 +70,7 @@ export function TradeProposalModal({
       <div className="bg-slate-900 border border-slate-800 w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         <div className="p-6 border-b border-slate-800 flex justify-between items-center">
           <h2 className="text-xl font-black uppercase italic tracking-tighter flex items-center gap-2 text-white">
-            <ArrowRightLeft className="text-cup-blue" /> Propor Troca Justa
+            <ArrowRightLeft className="text-cup-blue" /> Troca com {friend.username}
           </h2>
           <button onClick={onClose} className="p-2 hover:bg-slate-800 rounded-full transition-colors text-slate-400">
             <X size={20} />
@@ -127,7 +127,7 @@ export function TradeProposalModal({
                 </button>
               ))}
               {friendDuplicates.length === 0 && (
-                <div className="col-span-4 py-8 text-center text-slate-600 text-xs italic">Seu amigo não tem repetidas disponíveis.</div>
+                <div className="col-span-4 py-8 text-center text-slate-600 text-xs italic">{friend.username} não tem repetidas disponíveis.</div>
               )}
             </div>
           </div>

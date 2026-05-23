@@ -59,7 +59,7 @@ export function FriendsModal({
     try {
       await onSendRequest(id);
       alert('Pedido enviado!');
-    } catch (e) {
+    } catch {
       alert('Erro ao enviar pedido.');
     } finally {
       setLoadingId(null);
@@ -70,7 +70,7 @@ export function FriendsModal({
     setLoadingId(id);
     try {
       await onAcceptRequest(id);
-    } catch (e) {
+    } catch {
       alert('Erro ao aceitar pedido.');
     } finally {
       setLoadingId(null);
@@ -82,7 +82,7 @@ export function FriendsModal({
     setLoadingId(id);
     try {
       await onDeclineRequest(id);
-    } catch (e) {
+    } catch {
       alert('Erro ao recusar pedido.');
     } finally {
       setLoadingId(null);
@@ -94,7 +94,7 @@ export function FriendsModal({
     setLoadingId(friendshipId);
     try {
       await onRemoveFriend(friendshipId);
-    } catch (e) {
+    } catch {
       alert('Erro ao remover amigo.');
     } finally {
       setLoadingId(null);
@@ -102,7 +102,7 @@ export function FriendsModal({
   };
 
   const handleCopyLink = () => {
-    const url = window.location.origin;
+    const url = window.location.href;
     navigator.clipboard.writeText(url);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);

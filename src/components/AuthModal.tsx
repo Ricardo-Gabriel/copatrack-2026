@@ -43,8 +43,9 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
         alert('Confirme seu e-mail para ativar a conta!');
       }
       onClose();
-    } catch (err: any) {
-      setError(err.message || 'Erro ao realizar autenticação');
+    } catch (err) {
+      const error = err as Error;
+      setError(error.message || 'Erro ao realizar autenticação');
     } finally {
       setLoading(false);
     }
