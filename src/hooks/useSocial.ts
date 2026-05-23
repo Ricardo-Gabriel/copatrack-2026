@@ -26,7 +26,7 @@ export function useSocial(userId: string | undefined) {
       return;
     }
 
-    const formattedFriends = data.map((f: { sender_id: string; receiver: Profile; sender: Profile }) => {
+    const formattedFriends = (data as (Friendship & { sender: Profile; receiver: Profile })[]).map((f) => {
       const isSender = f.sender_id === userId;
       const friendProfile = isSender ? f.receiver : f.sender;
       return { ...f, friend_profile: friendProfile };
